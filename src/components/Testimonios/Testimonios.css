@@ -1,0 +1,66 @@
+
+/* Contenedor principal */
+.testimonios {
+  padding: 50px 5%;
+  background-color: white;
+}
+
+/* Contenedor de todos los testimonios */
+.testimonios-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Tarjeta individual de testimonio */
+.testimonio-card {
+  background: var(--light);
+  padding: 25px;
+  border-radius: 12px;
+  margin: 20px 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s;
+}
+
+/* Efecto hover en testimonios */
+.testimonio-card:hover {
+  transform: translateX(5px);
+}
+
+/* Texto del testimonio */
+.testimonio-texto {
+  font-size: 1.1rem;
+  color: var(--dark);
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+/* Autor del testimonio */
+.testimonio-autor {
+  color: var(--primary);
+  margin-top: 10px;
+}
+
+/* Estilo para el nombre del autor */
+.testimonio-autor strong {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/*RESPONSIVE DESIGN */
+
+@media (min-width: 768px) {
+  .testimonios {
+    padding: 80px 10%;
+  }
+  
+  /* En desktop, podemos mostrar testimonios en grid */
+  .testimonios-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+  }
+  
+  .testimonio-card {
+    margin: 0;
+  }
+}

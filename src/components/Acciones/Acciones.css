@@ -1,0 +1,61 @@
+
+/* Contenedor principal */
+.acciones {
+  background-color: var(--light);
+  padding: 60px 5%;
+  text-align: center;
+}
+
+/* Título de la sección - estilo consistente */
+.section-title {
+  text-align: center;
+  color: var(--primary);
+  margin-bottom: 30px;
+  font-size: 1.8rem;
+}
+
+/* Contenedor flexible para los botones */
+.acciones-botones {
+  display: flex;
+  flex-wrap: wrap;      
+  gap: 20px;            
+  justify-content: center;
+  margin-top: 25px;
+}
+
+/* Estilo base para ambos botones */
+.boton-accion {
+  background-color: var(--primary);
+  color: white;
+  padding: 14px 28px;
+  border-radius: 30px;   
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* Efecto hover para ambos botones */
+.boton-accion:hover {
+  background-color: #1e4ac4;  
+  transform: translateY(-2px); 
+}
+
+/* Botón de publicar (verde) */
+.boton-accion.publicar {
+  background-color: var(--secondary);
+}
+
+/* Hover específico para el botón verde */
+.boton-accion.publicar:hover {
+  background-color: #218838;
+}
+
+
+@media (min-width: 768px) {
+  .acciones {
+    padding: 80px 10%;
+  }
+}

@@ -1,0 +1,24 @@
+/* ============================================
+   VARIABLES GLOBALES Y ESTILOS BASE
+   ============================================ */
+:root {
+  --primary: #2a5bdc;      /* Color principal - azul */
+  --secondary: #28a745;    /* Color secundario - verde */
+  --dark: #212529;         /* Color oscuro para textos y footer */
+  --light: #f8f9fa;        /* Color claro para fondos */
+  --gray: #6c757d;         /* Color gris para textos secundarios */
+}
+
+/* Reset de estilos y configuración base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--light);
+  color: var(--dark);
+  line-height: 1.6;
+}
