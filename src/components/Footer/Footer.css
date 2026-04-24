@@ -1,31 +1,179 @@
-
+/* Footer.css - Estilos del pie de página*/
 
 /* Contenedor principal del footer */
 .footer {
   background-color: var(--dark);
   color: white;
-  padding: 40px 5%;
-  text-align: center;
+  padding: 60px 5% 30px;
+  margin-top: auto;
 }
 
-/* Contenedor de enlaces a redes sociales */
-.social-links {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 20px 0;
+/* Contenido interno del footer - Grid de 4 columnas */
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 50px;
 }
 
-/* Estilos para los enlaces de redes sociales */
-.social-links a {
+/* COLUMNA DE MARCA (Logo y descripción) */
+
+.footer-brand {
+  max-width: 300px;
+}
+
+.footer-logo img {
+  height: 60px;
+  filter: brightness(0) invert(1);
+  margin-bottom: 15px;
+  transition: transform 0.3s;
+}
+
+.footer-logo img:hover {
+  transform: scale(1.05);
+}
+
+.brand-description {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-top: 10px;
+}
+
+/*COLUMNAS DE ENLACES*/
+
+.footer-column h4 {
   color: white;
-  font-size: 1.5rem;
-  transition: color 0.3s;
-  text-decoration: none;
-  cursor: pointer;
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  position: relative;
+  display: inline-block;
 }
 
-/* Efecto hover - cambia al color primario */
-.social-links a:hover {
-  color: var(--primary);
+/* Línea decorativa debajo del título */
+.footer-column h4::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 35px;
+  height: 2px;
+  background-color: var(--primary);
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-column li {
+  margin-bottom: 12px;
+}
+
+.footer-column a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+  display: inline-block;
+}
+
+.footer-column a:hover {
+  color: white;
+  transform: translateX(5px);
+}
+
+/*REDES SOCIALES */
+
+.social-links li a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.social-links li a:hover {
+  transform: translateX(5px);
+}
+
+/* PARTE INFERIOR (Copyright) */
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-bottom p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.footer-motto {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.8rem;
+}
+
+/*RESPONSIVE DESIGN */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .footer-content {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 35px;
+  }
+  
+  .footer-brand {
+    grid-column: span 2;
+    max-width: 100%;
+    text-align: center;
+  }
+  
+  .footer-column h4::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .footer-column {
+    text-align: center;
+  }
+  
+  .social-links li a {
+    justify-content: center;
+  }
+}
+
+/* Móviles */
+@media (max-width: 576px) {
+  .footer {
+    padding: 40px 5% 20px;
+  }
+  
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .footer-brand {
+    grid-column: span 1;
+  }
+  
+  .footer-column {
+    text-align: center;
+  }
+  
+  .footer-column h4::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .footer-bottom p {
+    font-size: 0.75rem;
+  }
 }

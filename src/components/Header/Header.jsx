@@ -1,30 +1,37 @@
-import React, { useState } from 'react';
+/**
+ * Header.jsx - Barra de navegación superior
+ * Se muestra en todas las páginas de la aplicación
+ * Contiene el logo y los botones de navegación principales
+ */
+import React from 'react';
+import { Link } from 'react-router-dom';  // Link permite navegación sin recargar
 import './Header.css';
 import logo from '../../assets/logo.png';
 
 const Header = () => {
-  // Estado para controlar el menú responsive en móvil
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   return (
     <header className="header">
-      {/* Logo de la empresa */}
+      {/* Logo - Al hacer clic navega al home "/" */}
       <div className="logo">
-        <img src={logo} alt="Ecosistema Emprendedores" />
+        <Link to="/">
+          <img src={logo} alt="Entrepreneurs Ecosystem" />
+        </Link>
       </div>
 
-      {/* Botones de autenticación - siempre visibles en desktop */}
+      {/* Botones de navegación */}
       <div className="auth-buttons">
-        <a href="/login" className="btn-login">Iniciar sesión</a>
-        <a href="/registro" className="btn-signup">Registrarse</a>
+        {/* Botón Admin - Solo visible para administradores */}
+        <Link to="/admin" className="admin-desktop-btn">
+          <i className="fas fa-cog"></i> Admin
+        </Link>
+        {/* Botón Login - Inicio de sesión */}
+        <Link to="/login" className="btn-login">Login</Link>
+        {/* Botón Register - Registro de nuevos usuarios */}
+        <Link to="/register" className="btn-signup">Register</Link>
       </div>
 
-      {/* Botón de menú hamburguesa - solo visible en móvil */}
-      <button 
-        className="menu-toggle" 
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        aria-label="Menú de navegación"
-      >
+      {/* Menú hamburguesa - Solo visible en dispositivos móviles */}
+      <button className="menu-toggle" aria-label="Navigation menu">
         ☰
       </button>
     </header>

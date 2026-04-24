@@ -1,0 +1,286 @@
+/**
+ * Ventures.css - Estilos específicos de la página de emprendimientos
+ */
+
+.ventures-page {
+  background-color: var(--light);
+}
+
+/* Hero */
+.ventures-page .hero {
+  background: linear-gradient(135deg, var(--primary) 0%, #1e4ac4 100%);
+  color: white;
+  text-align: center;
+  padding: 60px 5%;
+}
+
+.ventures-page .hero h1 {
+  color: white;
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.ventures-page .hero p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+}
+
+/* Filtros */
+.filters-section {
+  background-color: white;
+  padding: 30px 5%;
+  box-shadow: var(--shadow-sm);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.search-bar {
+  display: flex;
+  max-width: 600px;
+  margin: 0 auto var(--spacing-xl);
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 12px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: var(--border-radius-xl) 0 0 var(--border-radius-xl);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-bar input:focus {
+  border-color: var(--primary);
+}
+
+.search-button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0 25px;
+  border-radius: 0 var(--border-radius-xl) var(--border-radius-xl) 0;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.search-button:hover {
+  background-color: #1e4ac4;
+}
+
+/* Categorías */
+.categories-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: center;
+}
+
+.category-btn {
+  background-color: #f1f3f5;
+  color: var(--dark);
+  border: none;
+  padding: 8px 20px;
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.category-btn:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+.category-btn.active {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Resultados */
+.results-count {
+  text-align: center;
+  color: var(--gray);
+  margin: var(--spacing-xl) 0 var(--spacing-lg);
+  font-size: 0.9rem;
+}
+
+/* Grid de emprendimientos */
+.ventures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.venture-card {
+  background: white;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.venture-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.venture-image {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.featured-badge {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background-color: var(--secondary);
+  color: white;
+  padding: 5px 12px;
+  border-radius: var(--border-radius-lg);
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.venture-content {
+  padding: var(--spacing-lg);
+}
+
+.venture-content h3 {
+  color: var(--primary);
+  margin-bottom: var(--spacing-sm);
+  font-size: 1.25rem;
+}
+
+.venture-category {
+  display: inline-block;
+  background-color: #eef2f6;
+  color: var(--primary);
+  padding: 4px 12px;
+  border-radius: var(--border-radius-lg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+}
+
+.venture-description {
+  color: var(--gray);
+  margin-bottom: var(--spacing-md);
+  line-height: 1.5;
+}
+
+.venture-meta {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  font-size: 0.85rem;
+  color: var(--gray);
+}
+
+.rating {
+  color: #f5b042;
+}
+
+.btn-details {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  background-color: var(--primary);
+  color: white;
+  padding: 10px;
+  border-radius: var(--border-radius-sm);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.btn-details:hover {
+  background-color: #1e4ac4;
+}
+
+/* Paginación */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-top: 50px;
+  padding: var(--spacing-lg) 0;
+}
+
+.page-btn {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  color: var(--dark);
+  padding: 8px 16px;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.page-btn:hover:not(:disabled) {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.page-btn.active {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* No results */
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: var(--border-radius-md);
+}
+
+.no-results p {
+  color: var(--gray);
+  margin-bottom: var(--spacing-lg);
+}
+
+.no-results button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ventures-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .search-bar {
+    flex-direction: column;
+  }
+  
+  .search-bar input {
+    border-radius: var(--border-radius-xl);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .search-button {
+    border-radius: var(--border-radius-xl);
+    padding: 12px;
+  }
+}

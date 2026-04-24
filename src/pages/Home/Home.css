@@ -1,0 +1,177 @@
+/**
+ * Home.css - Estilos específicos de la página principal
+ */
+
+/* Hero Section */
+.hero {
+  padding: 60px 5%;
+  text-align: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+}
+
+.hero h1 {
+  color: var(--primary);
+  font-size: 2rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.hero p {
+  color: var(--gray);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Actions Section */
+.actions-section {
+  background-color: var(--light);
+  padding: 60px 5%;
+  text-align: center;
+}
+
+.section-title {
+  text-align: center;
+  color: var(--primary);
+  margin-bottom: var(--spacing-xl);
+  font-size: 1.8rem;
+}
+
+.actions-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  justify-content: center;
+  margin-top: var(--spacing-lg);
+}
+
+.action-button {
+  background-color: var(--primary);
+  color: white;
+  padding: 14px 28px;
+  border-radius: var(--border-radius-xl);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: var(--shadow-sm);
+  display: inline-block;
+}
+
+.action-button:hover {
+  background-color: #1e4ac4;
+  transform: translateY(-2px);
+}
+
+.action-button.publish {
+  background-color: var(--secondary);
+}
+
+.action-button.publish:hover {
+  background-color: #218838;
+}
+
+/* Features Section */
+.features-section {
+  padding: 60px 5%;
+  background-color: white;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-xl);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background: white;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s;
+  text-align: center;
+  border: 1px solid #eef2f6;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Testimonials Section */
+.testimonials-section {
+  padding: 60px 5%;
+  background-color: #f8f9fa;
+}
+
+.testimonial-card {
+  background: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-md);
+  margin: var(--spacing-lg) auto;
+  max-width: 800px;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.testimonial-card p:first-child {
+  font-size: 1.1rem;
+  margin-bottom: var(--spacing-md);
+  font-style: italic;
+}
+
+/* Featured Ventures */
+.featured-ventures {
+  padding: 60px 5%;
+  background-color: white;
+}
+
+.ventures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-xl);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.venture-card {
+  background-color: #f1f3f5;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s;
+  text-align: center;
+}
+
+.venture-card:hover {
+  transform: translateY(-5px);
+}
+
+.venture-card h3 {
+  color: var(--primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .hero {
+    padding: 80px 10%;
+  }
+  
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  .actions-section,
+  .features-section,
+  .testimonials-section,
+  .featured-ventures {
+    padding: 80px 10%;
+  }
+}
