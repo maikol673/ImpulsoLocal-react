@@ -1,176 +1,355 @@
-/* Publish.jsx - Página para publicar nuevos emprendimientos*/
+/**
+ * Publish.jsx - Página para publicar nuevos emprendimientos
+ * Convertido desde Django a React
+ * Incluye: validaciones, subida de imágenes, categorías, ubicación
+ */
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './Publish.css';
 
 const Publish = () => {
   const navigate = useNavigate();
   
-  // Estado del formulario
+  // ============ ESTADOS DEL FORMULARIO ============
   const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    description: '',
-    location: '',
-    contact: '',
-    website: ''
+    nombre: '',
+    descripcion: '',
+    categoria: '',
+    ubicacion: '',
+    estado: 'activo',
+    imagen: null
   });
   
+  // ============ ESTADOS PARA VALIDACIÓN ============
+  const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  /**
-   * handleChange - Actualiza el estado cuando el usuario escribe
-   */
+  const [previewImage, setPreviewImage] = useState(null);
+  
+  // ============ LISTA DE CATEGORÍAS (como en Django) ============
+  const categorias = [
+    { value: '', label: 'Selecciona una categoría' },
+    { value: 'tecnologia', label: '💻 Tecnología' },
+    { value: 'alimentos', label: '🍔 Alimentos y Bebidas' },
+    { value: 'servicios', label: '📋 Servicios' },
+    { value: 'moda', label: '👗 Moda' },
+    { value: 'artesanias', label: '🎨 Artesanías' },
+    { value: 'educacion', label: '📚 Educación' },
+    { value: 'salud', label: '💊 Salud y Bienestar' },
+    { value: 'sostenibilidad', label: '🌱 Sostenibilidad' }
+  ];
+  
+  // ============ OPCIONES DE ESTADO ============
+  const estados = [
+    { value: 'activo', label: '✅ Activo' },
+    { value: 'pendiente', label: '⏳ Pendiente de revisión' },
+    { value: 'borrador', label: '📝 Borrador' }
+  ];
+  
+  // ============ MANEJAR CAMBIOS EN INPUTS ============
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Limpiar error del campo específico
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
-
-  /**
-   * handleSubmit - Envía el formulario al backend
-   */
+  
+  // ============ MANEJAR SUBIDA DE IMAGEN ============
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    
+    if (file) {
+      // Validar tipo de archivo
+      const tiposPermitidos = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!tiposPermitidos.includes(file.type)) {
+        setErrors(prev => ({ 
+          ...prev, 
+          imagen: 'Formato no permitido. Usa JPG, PNG o GIF' 
+        }));
+        return;
+      }
+      
+      // Validar tamaño (5MB máximo)
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors(prev => ({ 
+          ...prev, 
+          imagen: 'La imagen no puede superar los 5MB' 
+        }));
+        return;
+      }
+      
+      setFormData(prev => ({ ...prev, imagen: file }));
+      
+      // Crear preview de la imagen
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+      
+      // Limpiar error
+      if (errors.imagen) {
+        setErrors(prev => ({ ...prev, imagen: '' }));
+      }
+    }
+  };
+  
+  // ============ VALIDAR FORMULARIO ============
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.nombre.trim()) {
+      newErrors.nombre = 'El nombre del emprendimiento es obligatorio';
+    } else if (formData.nombre.length < 3) {
+      newErrors.nombre = 'El nombre debe tener al menos 3 caracteres';
+    }
+    
+    if (!formData.descripcion.trim()) {
+      newErrors.descripcion = 'La descripción es obligatoria';
+    } else if (formData.descripcion.length < 20) {
+      newErrors.descripcion = 'La descripción debe tener al menos 20 caracteres';
+    }
+    
+    if (!formData.categoria) {
+      newErrors.categoria = 'Selecciona una categoría';
+    }
+    
+    if (!formData.ubicacion.trim()) {
+      newErrors.ubicacion = 'La ubicación es obligatoria';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
+  // ============ ENVIAR FORMULARIO ============
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
     
-    // Validación básica
-    if (!formData.name || !formData.category || !formData.description) {
-      alert('Please fill in all required fields (*)');
-      setIsSubmitting(false);
+    if (!validateForm()) {
+      // Scroll al primer error
+      const firstError = document.querySelector('.error-message');
+      if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
     
-    // Aquí iría la llamada a la API
-    console.log('Publishing venture:', formData);
+    setIsSubmitting(true);
     
-    // Simular envío
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Crear FormData para enviar archivos
+    const submitData = new FormData();
+    submitData.append('nombre', formData.nombre);
+    submitData.append('descripcion', formData.descripcion);
+    submitData.append('categoria', formData.categoria);
+    submitData.append('ubicacion', formData.ubicacion);
+    submitData.append('estado', formData.estado);
+    if (formData.imagen) {
+      submitData.append('imagen', formData.imagen);
+    }
     
-    alert('Venture published successfully! 🎉');
-    navigate('/ventures');
+    try {
+      // Aquí iría la llamada a tu API de Django
+      console.log('Enviando datos:', Object.fromEntries(submitData));
+      
+      // Simular envío (después conectarás con tu backend)
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Mostrar mensaje de éxito
+      alert('✅ ¡Emprendimiento publicado con éxito!');
+      
+      // Redirigir al listado de emprendimientos
+      navigate('/ventures');
+      
+    } catch (error) {
+      console.error('Error al publicar:', error);
+      alert('❌ Error al publicar. Intenta de nuevo.');
+      
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
+  
+  // ============ RENDERIZADO ============
   return (
     <div className="publish-page">
-      {/* Hero */}
-      <section className="hero">
-        <h1>Share Your Venture</h1>
-        <p>Tell the world about your project and connect with potential partners</p>
-      </section>
-
-      {/* Formulario */}
-      <section className="publish-form-section">
-        <div className="form-container">
-          <h2 className="section-title">Venture Information</h2>
-          <p className="form-hint">All fields marked with * are required</p>
+      <div className="publish-container">
+        <h1 className="publish-title">📢 Publicar Nuevo Emprendimiento</h1>
+        
+        <form onSubmit={handleSubmit} className="publish-form" encType="multipart/form-data">
           
-          <form onSubmit={handleSubmit}>
-            {/* Nombre del emprendimiento */}
-            <div className="form-group">
-              <label htmlFor="name">Venture Name *</label>
-              <input 
-                type="text" 
-                id="name" 
-                name="name"
-                placeholder="e.g., GreenTech Solutions"
-                value={formData.name}
-                onChange={handleChange}
-                required 
+          {/* Mostrar errores generales */}
+          {Object.keys(errors).length > 0 && (
+            <div className="errors-container">
+              <strong>Por favor corrige los siguientes errores:</strong>
+              <ul>
+                {Object.values(errors).map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
+          {/* Campo: Nombre */}
+          <div className="form-group">
+            <label htmlFor="nombre">
+              Nombre del Emprendimiento <span className="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="nombre"
+              name="nombre"
+              value={formData.nombre}
+              onChange={handleChange}
+              placeholder="Ej: GreenTech Solutions"
+              className={errors.nombre ? 'error' : ''}
+            />
+            {errors.nombre && <span className="error-message">{errors.nombre}</span>}
+            <small>Elige un nombre único y memorable</small>
+          </div>
+          
+          {/* Campo: Descripción */}
+          <div className="form-group">
+            <label htmlFor="descripcion">
+              Descripción <span className="required">*</span>
+            </label>
+            <textarea
+              id="descripcion"
+              name="descripcion"
+              value={formData.descripcion}
+              onChange={handleChange}
+              rows="6"
+              placeholder="Describe tu emprendimiento: ¿qué problema resuelve? ¿cuál es tu misión? ¿qué lo hace único?"
+              className={errors.descripcion ? 'error' : ''}
+            ></textarea>
+            {errors.descripcion && <span className="error-message">{errors.descripcion}</span>}
+            <small>Mínimo 20 caracteres. Sé claro y convincente</small>
+          </div>
+          
+          {/* Campo: Categoría */}
+          <div className="form-group">
+            <label htmlFor="categoria">
+              Categoría <span className="required">*</span>
+            </label>
+            <select
+              id="categoria"
+              name="categoria"
+              value={formData.categoria}
+              onChange={handleChange}
+              className={errors.categoria ? 'error' : ''}
+            >
+              {categorias.map(cat => (
+                <option key={cat.value} value={cat.value} disabled={!cat.value}>
+                  {cat.label}
+                </option>
+              ))}
+            </select>
+            {errors.categoria && <span className="error-message">{errors.categoria}</span>}
+          </div>
+          
+          {/* Campo: Ubicación */}
+          <div className="form-group">
+            <label htmlFor="ubicacion">
+              Ubicación <span className="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="ubicacion"
+              name="ubicacion"
+              value={formData.ubicacion}
+              onChange={handleChange}
+              placeholder="Ciudad, País"
+              className={errors.ubicacion ? 'error' : ''}
+            />
+            {errors.ubicacion && <span className="error-message">{errors.ubicacion}</span>}
+            <small>Ej: Bogotá, Colombia</small>
+          </div>
+          
+          {/* Campo: Imagen (subida de archivo) */}
+          <div className="form-group">
+            <label htmlFor="imagen">Imagen del Emprendimiento</label>
+            <div className="file-input-wrapper">
+              <input
+                type="file"
+                id="imagen"
+                name="imagen"
+                onChange={handleImageChange}
+                accept="image/jpeg,image/png,image/gif"
+                className={errors.imagen ? 'error' : ''}
               />
-              <small>Choose a memorable name for your venture</small>
-            </div>
-
-            {/* Categoría */}
-            <div className="form-group">
-              <label htmlFor="category">Category *</label>
-              <select 
-                id="category" 
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select a category</option>
-                <option value="technology">💻 Technology</option>
-                <option value="food">🍔 Food & Beverage</option>
-                <option value="services">📋 Services</option>
-                <option value="fashion">👗 Fashion</option>
-                <option value="crafts">🎨 Crafts & Art</option>
-                <option value="education">📚 Education</option>
-                <option value="health">💊 Health & Wellness</option>
-              </select>
-            </div>
-
-            {/* Descripción */}
-            <div className="form-group">
-              <label htmlFor="description">Description *</label>
-              <textarea 
-                id="description" 
-                name="description"
-                rows="6"
-                placeholder="Describe your venture: what problem it solves, your target audience, what makes it unique..."
-                value={formData.description}
-                onChange={handleChange}
-                required
-              ></textarea>
-              <small>Provide a detailed description to attract potential partners</small>
-            </div>
-
-            {/* Ubicación */}
-            <div className="form-group">
-              <label htmlFor="location">Location</label>
-              <input 
-                type="text" 
-                id="location" 
-                name="location"
-                placeholder="City, Country"
-                value={formData.location}
-                onChange={handleChange}
-              />
-              <small>Where is your venture based?</small>
-            </div>
-
-            {/* Contacto */}
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="contact">Contact Email</label>
-                <input 
-                  type="email" 
-                  id="contact" 
-                  name="contact"
-                  placeholder="contact@yourventure.com"
-                  value={formData.contact}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="website">Website</label>
-                <input 
-                  type="url" 
-                  id="website" 
-                  name="website"
-                  placeholder="https://yourventure.com"
-                  value={formData.website}
-                  onChange={handleChange}
-                />
+              <div className="file-input-hint">
+                <i className="fas fa-cloud-upload-alt"></i> Haz clic o arrastra una imagen
               </div>
             </div>
-
-            {/* Botones */}
-            <div className="form-buttons">
-              <button type="submit" className="btn-submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Publishing...' : '🚀 Publish Venture'}
-              </button>
-              <button type="button" className="btn-cancel" onClick={() => navigate('/')}>
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      </section>
+            {errors.imagen && <span className="error-message">{errors.imagen}</span>}
+            <small>Formatos: JPG, PNG, GIF. Máximo: 5MB</small>
+            
+            {/* Preview de la imagen */}
+            {previewImage && (
+              <div className="image-preview">
+                <img src={previewImage} alt="Preview" />
+                <button 
+                  type="button" 
+                  className="remove-image"
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, imagen: null }));
+                    setPreviewImage(null);
+                  }}
+                >
+                  ✖
+                </button>
+              </div>
+            )}
+          </div>
+          
+          {/* Campo: Estado */}
+          <div className="form-group">
+            <label htmlFor="estado">Estado</label>
+            <select
+              id="estado"
+              name="estado"
+              value={formData.estado}
+              onChange={handleChange}
+            >
+              {estados.map(est => (
+                <option key={est.value} value={est.value}>
+                  {est.label}
+                </option>
+              ))}
+            </select>
+            <small>Los emprendimientos pendientes serán revisados por un administrador</small>
+          </div>
+          
+          {/* Botones de acción */}
+          <div className="form-actions">
+            <button 
+              type="submit" 
+              className="btn-submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <i className="fas fa-spinner fa-spin"></i> Publicando...
+                </>
+              ) : (
+                <>
+                  <i className="fas fa-rocket"></i> Publicar Emprendimiento
+                </>
+              )}
+            </button>
+            
+            <Link to="/ventures" className="btn-cancel">
+              Cancelar
+            </Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

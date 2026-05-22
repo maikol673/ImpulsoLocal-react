@@ -15,6 +15,7 @@ import Register from './pages/Register/Register';
 import Ventures from './pages/Ventures/Ventures';
 import Publish from './pages/Publish/Publish';
 import Admin from './pages/Admin/Admin';
+import VentureDetail from './pages/VentureDetail/VentureDetail';
 
 function App() {
   return (
@@ -28,7 +29,8 @@ function App() {
         <Route path="/register" element={<Register />} /> 
         <Route path="/ventures" element={<Ventures />} /> 
         <Route path="/publish" element={<Publish />} />   
-        <Route path="/admin" element={<Admin />} />       
+        <Route path="/admin" element={<Admin />} /> 
+        <Route path="/venture/:id" element={<VentureDetail />} />      
       </Routes>
       
       {/* Footer - Pie de página */}

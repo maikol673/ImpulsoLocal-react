@@ -1,0 +1,535 @@
+/**
+ * VentureDetail.css - Estilos para la página de detalle
+ */
+
+.venture-detail-page {
+  min-height: calc(100vh - 200px);
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* Botón volver */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #6c757d;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  text-decoration: none;
+  margin-bottom: 30px;
+  transition: all 0.3s;
+}
+
+.btn-back:hover {
+  background: #5a6268;
+  transform: translateX(-5px);
+}
+
+/* Grid principal */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 30px;
+}
+
+/* ============ COLUMNA IZQUIERDA ============ */
+.info-card,
+.description-card,
+.contact-card {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.venture-image {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.venture-image img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.venture-title {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.venture-category-badge {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.badge {
+  background: linear-gradient(135deg, #2a5bdc, #1e4ac4);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+}
+
+/* Calificación */
+.venture-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.stars {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.star {
+  color: #ddd;
+  font-size: 1.2rem;
+}
+
+.star.filled {
+  color: #ffc107;
+}
+
+.rating-value {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.reviews-count {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.venture-location {
+  text-align: center;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+/* Botones de acción */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.btn-like,
+.btn-contact,
+.btn-follow {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-like {
+  background: #f8f9fa;
+  color: #dc3545;
+  border: 1px solid #dee2e6;
+}
+
+.btn-like.liked {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-contact {
+  background: #2a5bdc;
+  color: white;
+}
+
+.btn-follow {
+  background: #f8f9fa;
+  color: #2a5bdc;
+  border: 1px solid #dee2e6;
+}
+
+.btn-like:hover,
+.btn-contact:hover,
+.btn-follow:hover {
+  transform: translateY(-2px);
+}
+
+/* Acciones del dueño */
+.owner-actions {
+  margin-top: 15px;
+}
+
+.owner-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-edit,
+.btn-delete {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-edit {
+  background: #ffc107;
+  color: #333;
+}
+
+.btn-delete {
+  background: #dc3545;
+  color: white;
+}
+
+/* Descripción */
+.description-card h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.description-card p {
+  line-height: 1.6;
+  color: #555;
+}
+
+/* ============ COLUMNA DERECHA ============ */
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px;
+  background: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.tab.active {
+  background: #2a5bdc;
+  color: white;
+}
+
+/* Productos */
+.btn-add-product {
+  display: inline-block;
+  background: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  margin-bottom: 20px;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.product-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+}
+
+.product-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.no-image {
+  height: 160px;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #adb5bd;
+}
+
+.product-info {
+  padding: 15px;
+}
+
+.product-info h4 {
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.product-description {
+  color: #6c757d;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.product-price {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #28a745;
+  margin-bottom: 8px;
+}
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-bottom: 12px;
+}
+
+.stock.in-stock {
+  color: #28a745;
+}
+
+.stock.out-stock {
+  color: #dc3545;
+}
+
+.status.active {
+  color: #28a745;
+}
+
+.status.inactive {
+  color: #6c757d;
+}
+
+.btn-add-to-cart {
+  width: 100%;
+  padding: 10px;
+  background: #2a5bdc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-add-to-cart:hover {
+  background: #1e4ac4;
+}
+
+.btn-unavailable {
+  width: 100%;
+  padding: 10px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: not-allowed;
+}
+
+/* Reseñas */
+.reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-write-review {
+  background: #ffc107;
+  color: #333;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.review-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.reviewer-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background: #2a5bdc;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.review-date {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.review-stars {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.review-stars .star {
+  font-size: 0.9rem;
+}
+
+.review-stars .rating {
+  margin-left: 5px;
+  font-weight: bold;
+}
+
+.review-comment {
+  color: #555;
+  line-height: 1.5;
+}
+
+/* Contacto */
+.contact-info {
+  margin-bottom: 15px;
+}
+
+.contact-info div {
+  margin-bottom: 8px;
+}
+
+.contact-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-whatsapp,
+.btn-email,
+.btn-web {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-whatsapp {
+  background: #25d366;
+  color: white;
+}
+
+.btn-email {
+  background: #ea4335;
+  color: white;
+}
+
+.btn-web {
+  background: #2a5bdc;
+  color: white;
+}
+
+/* Empty state */
+.empty-message {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 12px;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #2a5bdc;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error */
+.error-container {
+  text-align: center;
+  padding: 60px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .action-buttons,
+  .owner-buttons,
+  .contact-buttons {
+    flex-direction: column;
+  }
+  
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .reviews-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
