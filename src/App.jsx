@@ -16,6 +16,8 @@ import Ventures from './pages/Ventures/Ventures';
 import Publish from './pages/Publish/Publish';
 import Admin from './pages/Admin/Admin';
 import VentureDetail from './pages/VentureDetail/VentureDetail';
+import MyVentures from './pages/MyVentures/MyVentures';
+import EditVenture from './pages/EditVenture/EditVenture';
 
 function App() {
   return (
@@ -30,7 +32,9 @@ function App() {
         <Route path="/ventures" element={<Ventures />} /> 
         <Route path="/publish" element={<Publish />} />   
         <Route path="/admin" element={<Admin />} /> 
-        <Route path="/venture/:id" element={<VentureDetail />} />      
+        <Route path="/venture/:id" element={<VentureDetail />} />
+        <Route path="/my-ventures" element={<MyVentures />} />
+        <Route path="/edit-venture/:id" element={<EditVenture />} />      
       </Routes>
       
       {/* Footer - Pie de página */}

@@ -1,7 +1,6 @@
 /**
  * VentureDetail.jsx - Página de detalle de un emprendimiento
- * Muestra toda la información de un emprendimiento específico
- * Incluye: imágenes, descripción, productos, reseñas, contacto
+
  */
 
 import React, { useState, useEffect } from 'react';
@@ -9,392 +8,328 @@ import { useParams, Link } from 'react-router-dom';
 import './VentureDetail.css';
 
 const VentureDetail = () => {
-  const { id } = useParams(); // Obtener el ID de la URL
-//   const navigate = useNavigate();
+  const { id } = useParams();
   
-  // ============ ESTADOS ============
   const [venture, setVenture] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userHasLiked, setUserHasLiked] = useState(false);
-//   const [userReview, setUserReview] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [activeTab, setActiveTab] = useState('products'); // products, reviews
-  
-  // ============ SIMULACIÓN DE DATOS (después conectas con API) ============
+
+  // esta linea la comente por el momento para que no me saliera en rojo el codigo
+  // const [activeTab, setActiveTab] = useState('products');
+
   useEffect(() => {
-    // Simular carga de datos desde una API
     const loadVentureData = async () => {
       setLoading(true);
       
-      // Datos simulados del emprendimiento
+      // Datos simulados (igual que Django)
       const mockVenture = {
         id: parseInt(id),
-        nombre: id === '1' ? 'GreenTech Solutions' : 
-                id === '2' ? 'ArtesanaCo' : 'EduSmart',
-        descripcion: 'Somos una empresa dedicada a ofrecer soluciones innovadoras para emprendedores. Nuestra misión es ayudar a otros negocios a crecer y alcanzar sus metas. Con más de 5 años de experiencia, hemos ayudado a más de 100 emprendedores a despegar sus proyectos.',
-        categoria: { id: 1, nombre: 'Tecnología' },
-        calificacion: 4.8,
-        num_resenas: 124,
-        ubicacion: 'Bogotá, Colombia',
-        imagen: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=500',
-        email_contacto: 'contacto@greentech.com',
+        nombre: id === '1' ? 'Yupi' : 'GreenTech',
+        descripcion: 'empresa de alimentos empaquetados',
+        categoria: { id: 1, nombre: 'Alimentario y bebidas' },
+        calificacion: 4.5,
+        num_resenas: 0,
+        ubicacion: 'cal, colombia',
+        imagen: null,
+        email_contacto: 'contacto@yupi.com',
         telefono: '+57 300 123 4567',
-        sitio_web: 'www.greentech.com',
+        sitio_web: 'www.yupi.com',
         usuario: { id: 1, username: 'emprededor123' },
         productos: [
           {
             id: 1,
-            nombre: 'Kit Solar Portátil',
-            descripcion: 'Panel solar portátil para cargar dispositivos electrónicos en cualquier lugar.',
-            precio: 299900,
-            stock: 15,
+            nombre: 'Galletas de Chocolate',
+            descripcion: 'gallitas artesanales',
+            precio: 2500,
+            stock: 10,
             estado: 'activo',
             disponible: true,
-            imagen: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=300'
-          },
-          {
-            id: 2,
-            nombre: 'Sensor Inteligente',
-            descripcion: 'Sensor para monitoreo de consumo energético en tiempo real.',
-            precio: 149900,
-            stock: 8,
-            estado: 'activo',
-            disponible: true,
-            imagen: 'https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=300'
-          },
-          {
-            id: 3,
-            nombre: 'App de Gestión',
-            descripcion: 'Aplicación móvil para control de consumo energético.',
-            precio: 99900,
-            stock: 0,
-            estado: 'inactivo',
-            disponible: false,
             imagen: null
-          }
-        ],
-        resenas: [
-          {
-            id: 1,
-            usuario: { id: 2, username: 'carlos_dev', first_name: 'Carlos' },
-            calificacion: 5,
-            comentario: 'Excelente producto, muy recomendado. La atención al cliente es increíble.',
-            fecha_creacion: '2024-01-15'
-          },
-          {
-            id: 2,
-            usuario: { id: 3, username: 'maria_b', first_name: 'María' },
-            calificacion: 4,
-            comentario: 'Muy buen servicio, solo mejoraría el tiempo de entrega.',
-            fecha_creacion: '2024-01-10'
-          },
-          {
-            id: 3,
-            usuario: { id: 4, username: 'juan_p', first_name: 'Juan' },
-            calificacion: 5,
-            comentario: '¡Fantástico! Superó mis expectativas.',
-            fecha_creacion: '2024-01-05'
           }
         ]
       };
       
       setVenture(mockVenture);
-      setReviews(mockVenture.resenas);
+      setReviews([]);
       setLoading(false);
     };
     
     loadVentureData();
   }, [id]);
   
-  // ============ FUNCIONES DE INTERACCIÓN ============
-  const handleLike = () => {
-    setUserHasLiked(!userHasLiked);
-    // Aquí iría la llamada a la API
-    console.log('Like toggled');
-  };
-  
-  const handleContact = (method) => {
-    console.log(`Contactar por: ${method}`);
-    // Aquí iría la lógica de contacto
-    alert(`Próximamente: contacto por ${method}`);
-  };
-  
-  const handleAddToCart = (productoId) => {
-    console.log(`Agregar al carrito: producto ${productoId}`);
-    alert('✅ Producto agregado al carrito');
-  };
-  
-  // ============ RENDERIZADO ============
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p>Cargando emprendimiento...</p>
+      <div className="container text-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
       </div>
     );
   }
   
   if (!venture) {
     return (
-      <div className="error-container">
-        <h2>⚠️ Emprendimiento no encontrado</h2>
-        <Link to="/ventures" className="btn-back">← Volver al listado</Link>
+      <div className="container text-center py-5">
+        <h2>Emprendimiento no encontrado</h2>
+        <Link to="/ventures" className="btn btn-secondary">← Volver</Link>
       </div>
     );
   }
   
   return (
-    <div className="venture-detail-page">
-      <div className="container">
+    <div className="container py-4">
+      
+      {/* Botón Volver */}
+      <Link to="/ventures" className="btn btn-secondary mb-4">
+        ← Volver
+      </Link>
+      
+      <div className="row g-4">
         
-        {/* Botón Volver */}
-        <Link to="/ventures" className="btn-back">
-          ← Volver al listado
-        </Link>
-        
-        <div className="detail-grid">
+        {/* ============ COLUMNA IZQUIERDA ============ */}
+        <div className="col-lg-4">
           
-          {/* ============ COLUMNA IZQUIERDA ============ */}
-          <div className="detail-left">
+          {/* Card de información */}
+          <div className="card shadow-sm border-0 p-3">
             
-            {/* Tarjeta de información principal */}
-            <div className="info-card">
-              
-              {/* Imagen principal */}
-              {venture.imagen && (
-                <div className="venture-image">
-                  <img src={venture.imagen} alt={venture.nombre} />
-                </div>
-              )}
-              
-              {/* Título */}
-              <h1 className="venture-title">{venture.nombre}</h1>
-              
-              {/* Categoría */}
-              <div className="venture-category-badge">
-                <span className="badge">{venture.categoria.nombre}</span>
+            {/* Imagen principal */}
+            {venture.imagen && (
+              <div className="text-center mb-3">
+                <img src={venture.imagen} className="img-fluid rounded shadow-sm" alt={venture.nombre} />
               </div>
+            )}
+            
+            {/* Título */}
+            <h2 className="fw-bold text-capitalize mb-1 text-center">
+              {venture.nombre}
+            </h2>
+            
+            {/* Categoría */}
+            <div className="text-center mt-2 mb-3">
+              <span className="badge bg-primary px-3 py-2 fs-6">
+                {venture.categoria.nombre}
+              </span>
+            </div>
+            
+            {/* Calificación */}
+            <p className="text-center mb-1 fs-6">
+              ⭐ {venture.calificacion}  
+              <span className="text-muted">({venture.num_resenas} reseñas)</span>
+            </p>
+            
+            {/* Ubicación */}
+            <p className="text-muted text-center mb-3">
+              📍 {venture.ubicacion}
+            </p>
+            
+            {/* Botón Dejar Reseña */}
+            <div className="mb-3">
+              <Link to={`/add-review/${venture.id}`} className="btn btn-warning w-100">
+                ⭐ Dejar Reseña
+              </Link>
+            </div>
+            
+            {/* ACCIONES */}
+            <div className="d-grid gap-2">
               
-              {/* Calificación */}
-              <div className="venture-rating">
-                <div className="stars">
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <span key={star} className={star <= Math.floor(venture.calificacion) ? 'star filled' : 'star'}>
-                      ★
-                    </span>
-                  ))}
-                </div>
-                <span className="rating-value">{venture.calificacion}</span>
-                <span className="reviews-count">({venture.num_resenas} reseñas)</span>
-              </div>
+              {/* Me Gusta */}
+              <button 
+                className={`btn ${userHasLiked ? 'btn-danger' : 'btn-outline-danger'}`}
+                onClick={() => setUserHasLiked(!userHasLiked)}
+              >
+                {userHasLiked ? '❤️ Te Gusta' : '🤍 Me Gusta'}
+              </button>
               
-              {/* Ubicación */}
-              <div className="venture-location">
-                <i className="fas fa-map-marker-alt"></i> {venture.ubicacion}
-              </div>
+              {/* Contactar */}
+              <button className="btn btn-primary">
+                📞 Contactar
+              </button>
               
-              {/* Botones de acción */}
-              <div className="action-buttons">
-                <button 
-                  className={`btn-like ${userHasLiked ? 'liked' : ''}`}
-                  onClick={handleLike}
-                >
-                  {userHasLiked ? '❤️ Te Gusta' : '🤍 Me Gusta'}
-                </button>
-                
-                <button className="btn-contact" onClick={() => handleContact('whatsapp')}>
-                  📞 Contactar
-                </button>
-                
-                <button className="btn-follow">
-                  👤 Seguir
-                </button>
-              </div>
+              {/* Seguir */}
+              <button className="btn btn-outline-primary">
+                👤 Seguir
+              </button>
               
-              {/* Botones de edición (solo dueño) */}
-              {venture.usuario.id === 1 && ( // Simular que es el dueño
-                <div className="owner-actions">
-                  <hr />
-                  <div className="owner-buttons">
-                    <Link to={`/edit-venture/${venture.id}`} className="btn-edit">
-                      ✏️ Editar
-                    </Link>
-                    <button className="btn-delete" onClick={() => alert('¿Eliminar?')}>
-                      🗑️ Eliminar
-                    </button>
-                  </div>
-                </div>
+              {/* Ver Métricas (solo dueño) */}
+              {venture.usuario.id === 1 && (
+                <Link to={`/dashboard/${venture.id}`} className="btn btn-info mt-2">
+                  📊 Ver Métricas
+                </Link>
               )}
             </div>
             
-            {/* Descripción */}
-            <div className="description-card">
-              <h3>📄 Descripción</h3>
-              <p>{venture.descripcion}</p>
-            </div>
+            {/* OPCIONES DE EDICIÓN (solo dueño) */}
+            {venture.usuario.id === 1 && (
+              <>
+                <hr />
+                <div className="d-flex gap-2">
+                  <Link to={`/edit-venture/${venture.id}`} className="btn btn-warning w-50">
+                    ✏ Editar
+                  </Link>
+                  <button className="btn btn-danger w-50">
+                    🗑 Eliminar
+                  </button>
+                </div>
+              </>
+            )}
           </div>
           
-          {/* ============ COLUMNA DERECHA ============ */}
-          <div className="detail-right">
-            
-            {/* Tabs de navegación */}
-            <div className="tabs">
-              <button 
-                className={`tab ${activeTab === 'products' ? 'active' : ''}`}
-                onClick={() => setActiveTab('products')}
-              >
-                🛍️ Productos ({venture.productos.length})
-              </button>
-              <button 
-                className={`tab ${activeTab === 'reviews' ? 'active' : ''}`}
-                onClick={() => setActiveTab('reviews')}
-              >
-                ⭐ Reseñas ({reviews.length})
-              </button>
+          {/* DESCRIPCIÓN */}
+          <div className="card shadow-sm border-0 p-3 mt-3">
+            <h4 className="fw-bold mb-2">📄 Descripción</h4>
+            <p className="text-muted mb-0" style={{ lineHeight: 1.6 }}>
+              {venture.descripcion}
+            </p>
+          </div>
+        </div>
+        
+        {/* ============ COLUMNA DERECHA ============ */}
+        <div className="col-lg-8">
+          
+          {/* PRODUCTOS */}
+          <div className="card shadow-sm border-0">
+            <div className="card-header bg-info text-white py-3">
+              <h4 className="mb-0">🛍 Productos de {venture.nombre}</h4>
             </div>
             
-            {/* ============ TAB: PRODUCTOS ============ */}
-            {activeTab === 'products' && (
-              <div className="products-section">
-                
-                {/* Botón agregar producto (solo dueño) */}
-                {venture.usuario.id === 1 && (
-                  <Link to={`/add-product/${venture.id}`} className="btn-add-product">
-                    ➕ Agregar Producto
-                  </Link>
-                )}
-                
-                <div className="products-grid">
-                  {venture.productos.map(producto => (
-                    <div key={producto.id} className="product-card">
+            <div className="card-body">
+              
+              {/* Botón Agregar Producto (solo dueño) */}
+              {venture.usuario.id === 1 && (
+                <Link to={`/add-product/${venture.id}`} className="btn btn-success btn-sm mb-3">
+                  ➕ Agregar Producto
+                </Link>
+              )}
+              
+              <div className="row g-3">
+                {venture.productos.map(producto => (
+                  <div key={producto.id} className="col-md-6 col-lg-4">
+                    <div className="card h-100 border-0 shadow-sm producto-card">
+                      
                       {/* Imagen del producto */}
                       {producto.imagen ? (
-                        <img src={producto.imagen} alt={producto.nombre} />
+                        <img src={producto.imagen} className="card-img-top rounded-top" 
+                             style={{ height: '190px', objectFit: 'cover' }} alt={producto.nombre} />
                       ) : (
-                        <div className="no-image">📦 Sin imagen</div>
+                        <div className="card-img-top bg-light d-flex align-items-center justify-content-center rounded-top"
+                             style={{ height: '190px' }}>
+                          <span className="text-muted">Sin imagen</span>
+                        </div>
                       )}
                       
-                      <div className="product-info">
-                        <h4>{producto.nombre}</h4>
-                        <p className="product-description">{producto.descripcion}</p>
-                        
-                        <div className="product-price">
-                          ${producto.precio.toLocaleString('es-CO')}
-                        </div>
-                        
-                        <div className="product-meta">
-                          <span className={`stock ${producto.stock > 0 ? 'in-stock' : 'out-stock'}`}>
-                            Stock: {producto.stock}
+                      <div className="card-body">
+                        <h6 className="fw-bold mb-1">{producto.nombre}</h6>
+                        <p className="text-muted small mb-2">
+                          {producto.descripcion}
+                        </p>
+                        <span className="fw-bold text-success d-block mb-1">
+                          ${producto.precio.toLocaleString()}
+                        </span>
+                        <small className="text-muted">
+                          Stock: {producto.stock} |
+                          <span className={producto.estado === 'activo' ? 'text-success' : 'text-danger'}>
+                            {producto.estado === 'activo' ? ' Activo' : ' Inactivo'}
                           </span>
-                          <span className={`status ${producto.estado === 'activo' ? 'active' : 'inactive'}`}>
-                            {producto.estado === 'activo' ? '✅ Activo' : '❌ Inactivo'}
-                          </span>
-                        </div>
-                        
-                        {/* Botón agregar al carrito */}
+                        </small>
+                      </div>
+                      
+                      <div className="card-footer bg-white border-0">
                         {producto.disponible ? (
-                          <button 
-                            className="btn-add-to-cart"
-                            onClick={() => handleAddToCart(producto.id)}
-                          >
+                          <button className="btn btn-primary btn-sm w-100">
                             🛒 Agregar al carrito
                           </button>
                         ) : (
-                          <button className="btn-unavailable" disabled>
-                            No disponible
+                          <button className="btn btn-secondary btn-sm w-100" disabled>
+                            No Disponible
                           </button>
                         )}
                       </div>
                     </div>
-                  ))}
-                </div>
-                
-                {venture.productos.length === 0 && (
-                  <div className="empty-message">
-                    <p>Aún no hay productos disponibles.</p>
                   </div>
-                )}
-              </div>
-            )}
-            
-            {/* ============ TAB: RESEÑAS ============ */}
-            {activeTab === 'reviews' && (
-              <div className="reviews-section">
-                
-                {/* Botón escribir reseña */}
-                <div className="reviews-header">
-                  <h3>⭐ Reseñas ({reviews.length})</h3>
-                  <Link to={`/add-review/${venture.id}`} className="btn-write-review">
-                    ✍️ Escribir Reseña
-                  </Link>
-                </div>
-                
-                {/* Lista de reseñas */}
-                {reviews.length > 0 ? (
-                  <div className="reviews-list">
-                    {reviews.map(review => (
-                      <div key={review.id} className="review-card">
-                        <div className="review-header">
-                          <div className="reviewer-info">
-                            <div className="avatar">
-                              {review.usuario.first_name?.charAt(0) || review.usuario.username.charAt(0)}
-                            </div>
-                            <div>
-                              <strong>{review.usuario.first_name || review.usuario.username}</strong>
-                              <div className="review-date">
-                                {new Date(review.fecha_creacion).toLocaleDateString('es-CO')}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="review-stars">
-                            {[1, 2, 3, 4, 5].map(star => (
-                              <span key={star} className={star <= review.calificacion ? 'star filled' : 'star'}>
-                                ★
-                              </span>
-                            ))}
-                            <span className="rating">{review.calificacion}/5</span>
-                          </div>
-                        </div>
-                        <p className="review-comment">{review.comentario}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="empty-message">
-                    <div className="empty-icon">📝</div>
-                    <h4>Aún no hay reseñas</h4>
-                    <p>Sé el primero en compartir tu experiencia</p>
-                  </div>
-                )}
-              </div>
-            )}
-            
-            {/* ============ CONTACTO ============ */}
-            <div className="contact-card">
-              <h3>📞 Contacto</h3>
-              
-              <div className="contact-info">
-                <div><strong>✉ Email:</strong> {venture.email_contacto}</div>
-                <div><strong>📱 Teléfono:</strong> {venture.telefono}</div>
-                <div><strong>🌐 Web:</strong> {venture.sitio_web}</div>
+                ))}
               </div>
               
-              <div className="contact-buttons">
-                <button className="btn-whatsapp" onClick={() => handleContact('whatsapp')}>
-                  📱 WhatsApp
-                </button>
-                <button className="btn-email" onClick={() => handleContact('email')}>
-                  ✉ Email
-                </button>
-                <button className="btn-web" onClick={() => window.open(`https://${venture.sitio_web}`, '_blank')}>
-                  🌐 Web
-                </button>
-              </div>
+              {venture.productos.length === 0 && (
+                <p className="text-center text-muted mt-3">
+                  Aún no hay productos disponibles.
+                </p>
+              )}
+            </div>
+          </div>
+          
+          {/* RESEÑAS */}
+          <div className="card shadow-sm border-0 p-3 mt-4">
+            
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h4 className="mb-0">⭐ Reseñas ({reviews.length})</h4>
+              <Link to={`/add-review/${venture.id}`} className="btn btn-warning btn-sm">
+                ✍️ Escribir Reseña
+              </Link>
             </div>
             
+            {reviews.length > 0 ? (
+              <div>
+                {reviews.map(review => (
+                  <div key={review.id} className="bg-light p-3 rounded mb-3">
+                    <div className="d-flex justify-content-between align-items-start mb-2">
+                      <div className="d-flex align-items-center">
+                        <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+                             style={{ width: '40px', height: '40px', fontWeight: 'bold' }}>
+                          {review.usuario.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <strong>{review.usuario}</strong>
+                          <div className="text-muted small">{review.fecha}</div>
+                        </div>
+                      </div>
+                      <div className="text-warning">
+                        {'★'.repeat(review.calificacion)}{'☆'.repeat(5 - review.calificacion)}
+                        <span className="ms-1 fw-bold text-dark">{review.calificacion}/5</span>
+                      </div>
+                    </div>
+                    <p className="mb-0">{review.comentario}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-4">
+                <div className="text-muted mb-2" style={{ fontSize: '3rem' }}>📝</div>
+                <h5 className="text-muted">Aún no hay reseñas</h5>
+                <p className="text-muted small">Sé el primero en compartir tu experiencia</p>
+              </div>
+            )}
           </div>
+          
+          {/* CONTACTO */}
+          <div className="card shadow-sm border-0 p-3 mt-4">
+            <h4 className="mb-3">📞 Contacto</h4>
+            
+            <div className="mb-2"><strong>✉ Email:</strong> {venture.email_contacto}</div>
+            <div className="mb-2"><strong>📱 Teléfono:</strong> {venture.telefono}</div>
+            <div className="mb-2"><strong>🌐 Web:</strong> {venture.sitio_web}</div>
+            
+            <div className="d-flex gap-2 mt-3">
+              <button className="btn btn-primary w-25">📱 WhatsApp</button>
+              <button className="btn btn-success w-25">✉ Email</button>
+              <button className="btn btn-outline-primary w-25">🌐 Web</button>
+            </div>
+          </div>
+          
         </div>
       </div>
+      
+      <style>{`
+        .producto-card {
+          cursor: pointer;
+          transition: transform .2s, box-shadow .2s;
+        }
+        .producto-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 6px 18px rgba(0,0,0,.12);
+        }
+      `}</style>
+      
     </div>
   );
 };

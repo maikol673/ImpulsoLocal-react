@@ -6,6 +6,8 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'  // Enrutador para navegación
 import './index.css'  // Estilos globales base
+import 'bootstrap/dist/css/bootstrap.min.css'  // ← IMPORTAR BOOTSTRAP
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'  // ← JS de Bootstrap
 import App from './App.jsx'
 
 // Renderiza la aplicación en el elemento con id "root"
