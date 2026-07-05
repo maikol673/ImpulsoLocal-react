@@ -1,104 +1,135 @@
 /**
- * Home.jsx - Página principal de la aplicación
- * Es la primera vista que ven los usuarios al entrar al sitio
- * Contiene: Hero, acciones, beneficios, testimonios y emprendimientos destacados
+ * Home.jsx - Página principal
+ * EXACTAMENTE como el home.html de Django
  */
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Home.css';
 
 const Home = () => {
+  const navigate = useNavigate();
+  
+  // Leer datos directamente (sin useEffect)
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const testimonios = JSON.parse(localStorage.getItem('testimonios') || '[]');
+
   return (
     <div className="home-page">
-      {/* 
-        HERO SECTION - Sección principal de bienvenida
-      */}
+      
+      {/* HERO SECTION */}
       <section className="hero">
-        <h1>Take your entrepreneurship to the next level</h1>
-        <p>Connect, learn and grow with our community of innovative entrepreneurs</p>
+        <h1>Impulsa tu emprendimiento al siguiente nivel</h1>
+        <p>Conecta, aprende y crece con nuestra comunidad de emprendedores innovadores</p>
       </section>
 
-      {/* 
-        ACTIONS SECTION - Botones principales de acción
-      */}
-      <section className="actions-section">
-        <h2 className="section-title">What do you want to do?</h2>
+      {/* ACCIONES */}
+      <section className="actions">
+        <h2 className="section-title">¿Qué deseas hacer?</h2>
         <div className="actions-buttons">
-          {/* Ver todos los emprendimientos */}
           <Link to="/ventures" className="action-button">
-            View Ventures
+            Ver Emprendimientos
           </Link>
-          {/* Publicar un nuevo emprendimiento */}
           <Link to="/publish" className="action-button publish">
-            Publish Venture
+            Publicar Emprendimiento
           </Link>
         </div>
       </section>
 
-      {/* 
-        FEATURES SECTION - Beneficios de la plataforma
-      */}
-      <section className="features-section">
-        <h2 className="section-title">Our Benefits</h2>
+      {/* BENEFICIOS - CON ENLACES CORRECTOS */}
+      <section className="features">
+        <h2 className="section-title">Nuestros Beneficios</h2>
         <div className="features-grid">
-          {/* Beneficio 1: Crecimiento */}
-          <div className="feature-card">
-            <div className="feature-icon">📈</div>
-            <h3>Growth</h3>
-            <p>Tools to scale your business sustainably</p>
-          </div>
           
-          {/* Beneficio 2: Networking */}
-          <div className="feature-card">
-            <div className="feature-icon">🤝</div>
-            <h3>Networking</h3>
-            <p>Connect with mentors and other entrepreneurs</p>
-          </div>
+          {/* Beneficio 1: Crecimiento - VA A VENTURES */}
+          <Link to="/ventures" className="feature-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="feature-card">
+              <div className="feature-icon">📈</div>
+              <h3>Crecimiento</h3>
+              <p>Herramientas para escalar tu negocio de manera sostenible</p>
+            </div>
+          </Link>
           
-          {/* Beneficio 3: Formación */}
-          <div className="feature-card">
-            <div className="feature-icon">🎓</div>
-            <h3>Training</h3>
-            <p>Specialized courses for each stage of your business</p>
-          </div>
+          {/* Beneficio 2: Networking - VA A NETWORKING */}
+          <Link to="/networking" className="feature-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="feature-card">
+              <div className="feature-icon">🤝</div>
+              <h3>Networking</h3>
+              <p>Conecta con mentores y otros emprendedores</p>
+            </div>
+          </Link>
+          
+          {/* Beneficio 3: Formación - VA A COURSES */}
+          <Link to="/courses" className="feature-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="feature-card">
+              <div className="feature-icon">🎓</div>
+              <h3>Formación</h3>
+              <p>Cursos especializados para cada etapa de tu negocio</p>
+            </div>
+          </Link>
         </div>
       </section>
 
-      {/* 
-        TESTIMONIALS SECTION - Opiniones de usuarios
-      */}
-      <section className="testimonials-section">
-        <h2 className="section-title">What our members say</h2>
-        <div className="testimonial-card">
-          <p>"This ecosystem helped me connect with investors for my startup"</p>
-          <p><strong>- Ana L., Founder of TechSolution</strong></p>
-        </div>
-        <div className="testimonial-card">
-          <p>"The courses gave me the tools to triple my sales"</p>
-          <p><strong>- Carlos M., Owner of Dulce Bakery</strong></p>
+      {/* TESTIMONIOS */}
+      <section className="testimonials">
+        <h2 className="section-title">Lo que dicen nuestros miembros</h2>
+        
+        {testimonios.length > 0 ? (
+          <div className="testimonials-grid">
+            {testimonios.map((testimonio, index) => (
+              <div key={index} className="testimonial-card">
+                <p>"{testimonio.contenido}"</p>
+                <div className="testimonial-author">
+                  <strong>
+                    {testimonio.nombre}
+                    {testimonio.empresa && `, ${testimonio.empresa}`}
+                  </strong>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="no-testimonials">
+            <p className="no-testimonials-text">Aún no hay testimonios. ¡Sé el primero en compartir tu experiencia!</p>
+          </div>
+        )}
+        
+        {/* Botón para compartir testimonio - SIEMPRE visible */}
+        <div className="testimonial-button-container">
+          {isLoggedIn ? (
+            <Link to="/create-testimonial" className="btn-share-testimonial">
+              📝 Compartir mi experiencia
+            </Link>
+          ) : (
+            <button 
+              className="btn-share-testimonial"
+              onClick={() => navigate('/login')}
+            >
+              📝 Inicia sesión para compartir tu experiencia
+            </button>
+          )}
         </div>
       </section>
 
-      {/* 
-        FEATURED VENTURES - Emprendimientos destacados
-      */}
-      <section className="featured-ventures">
-        <h2 className="section-title">Featured Ventures</h2>
+      {/* EMPRENDIMIENTOS DESTACADOS */}
+      <section className="ventures">
+        <h2 className="section-title">Emprendimientos Destacados</h2>
         <div className="ventures-grid">
           <div className="venture-card">
             <h3>GreenTech</h3>
-            <p>Sustainable solutions for urban agriculture.</p>
+            <p>Soluciones sostenibles para la agricultura urbana.</p>
           </div>
           <div className="venture-card">
             <h3>EduSmart</h3>
-            <p>Training platform for young entrepreneurs.</p>
+            <p>Plataforma de formación para jóvenes emprendedores.</p>
           </div>
           <div className="venture-card">
             <h3>ArtesanaCo</h3>
-            <p>Digital commerce for local artisans.</p>
+            <p>Comercio digital para artesanos locales.</p>
           </div>
         </div>
       </section>
+      
     </div>
   );
 };

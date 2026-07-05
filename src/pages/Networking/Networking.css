@@ -1,0 +1,413 @@
+/**
+ * Networking.css - Estilos para Networking
+ * VERSIÓN HOMOGÉNEA - Coherente con el resto de la plataforma
+ */
+
+.networking-page {
+  min-height: calc(100vh - 200px);
+  background: #f5f7fa;
+  padding: 30px 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ============ HEADER ============ */
+.networking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.networking-header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn-back-home-networking {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #6c757d;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-back-home-networking:hover {
+  background: #5a6268;
+  transform: translateX(-3px);
+  color: white;
+}
+
+.networking-title {
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0;
+}
+
+/* ============ SECCIÓN COMUNIDAD - AZUL ============ */
+.community-section {
+  background: linear-gradient(135deg, #2a5bdc, #1e4ac4);
+  border-radius: 15px;
+  padding: 40px 30px;
+  margin-bottom: 35px;
+  text-align: center;
+}
+
+.community-content {
+  color: white;
+}
+
+.community-title {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.community-text {
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+  opacity: 0.9;
+}
+
+.community-text strong {
+  color: white;
+}
+
+.community-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.btn-social {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: white;
+  transition: all 0.3s;
+  min-width: 150px;
+  justify-content: center;
+}
+
+.btn-social:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+.btn-facebook {
+  background:#1da1f2;
+}
+
+.btn-facebook:hover {
+  background: #1da1f2;
+}
+
+.btn-instagram {
+  background: #1da1f2;
+}
+
+.btn-instagram:hover {
+  background: #1da1f2;
+}
+
+.btn-twitter {
+  background: #1da1f2;
+}
+
+.btn-twitter:hover {
+  background: #1a91da;
+}
+
+/* ============ EVENTOS ============ */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 25px;
+  margin-bottom: 35px;
+}
+
+/* ============ TARJETA DE EVENTO ============ */
+.event-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* ============ HEADER DEL EVENTO - TODOS AZULES ============ */
+.event-header {
+  padding: 16px 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: linear-gradient(135deg, #2a5bdc, #1e4ac4);
+}
+
+.event-name {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.event-badge {
+  padding: 3px 14px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #ffc107;
+  color: #212529;
+}
+
+/* ============ CUERPO DEL EVENTO ============ */
+.event-body {
+  padding: 18px 20px;
+}
+
+.event-body div {
+  font-size: 0.9rem;
+  color: #555;
+  padding: 3px 0;
+}
+
+.event-body strong {
+  color: #333;
+}
+
+.event-description {
+  margin-top: 10px;
+  color: #555;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* ============ FOOTER DEL EVENTO ============ */
+.event-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #e9ecef;
+  background: #fafafa;
+}
+
+/* Botón Unirse Online - AZUL */
+.btn-online {
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: white;
+  width: 100%;
+  text-align: center;
+  background: #2a5bdc;
+}
+
+.btn-online:hover {
+  background: #1e4ac4;
+  transform: translateY(-2px);
+}
+
+/* Botón Confirmar Asistencia - VERDE (se mantiene como acción principal) */
+.btn-presencial {
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: white;
+  width: 100%;
+  text-align: center;
+  background: #2a5bdc;
+}
+
+.btn-presencial:hover {
+  background: #2a5bdc;
+  transform: translateY(-2px);
+}
+
+/* Botón Login - AZUL */
+.btn-event-login {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 2px solid #2a5bdc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2a5bdc;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+  text-align: center;
+}
+
+.btn-event-login:hover {
+  background: #2a5bdc;
+  color: white;
+}
+
+/* ============ RED DE CONTACTOS ============ */
+.contacts-section {
+  margin-top: 35px;
+}
+
+.contacts-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.contacts-header {
+  background: #2a5bdc; /* ← AZUL */
+  color: white;
+  padding: 14px 20px;
+}
+
+.contacts-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.contacts-body {
+  padding: 20px;
+}
+
+.contacts-subtitle {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+}
+
+.contacts-text {
+  color: #6c757d;
+  margin-bottom: 18px;
+  font-size: 0.9rem;
+}
+
+.contacts-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-contact {
+  padding: 10px 16px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+  background: transparent;
+  width: 100%;
+}
+
+.btn-contact:hover {
+  transform: translateY(-2px);
+}
+
+.btn-contact-primary {
+  border-color: #2a5bdc;
+  color: #2a5bdc;
+}
+
+.btn-contact-primary:hover {
+  background: #2a5bdc;
+  color: white;
+}
+
+.btn-contact-success {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.btn-contact-success:hover {
+  background: #28a745;
+  color: white;
+}
+
+.btn-contact-info {
+  border-color: #17a2b8;
+  color: #17a2b8;
+}
+
+.btn-contact-info:hover {
+  background: #17a2b8;
+  color: white;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .networking-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .networking-header-left {
+    flex-wrap: wrap;
+  }
+  
+  .btn-back-home-networking {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+  
+  .networking-title {
+    font-size: 1.4rem;
+  }
+  
+  .community-section {
+    padding: 30px 20px;
+  }
+  
+  .community-title {
+    font-size: 1.4rem;
+  }
+  
+  .community-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-social {
+    width: 100%;
+    max-width: 250px;
+  }
+  
+  .events-grid {
+    grid-template-columns: 1fr;
+  }
+}

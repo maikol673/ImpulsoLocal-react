@@ -1,28 +1,492 @@
 /**
- * VentureDetail.css - Solo estilos adicionales
- * La mayoría de los estilos vienen de Bootstrap
+ * VentureDetail.css - Estilos para Detalle de Emprendimiento
  */
 
-/* Estilos adicionales que no están en Bootstrap */
-.producto-card {
+.venture-detail-page {
+  min-height: calc(100vh - 200px);
+  background: #f5f7fa;
+  padding: 30px 0;
+}
+
+.venture-detail-page .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ============ BOTÓN VOLVER ============ */
+.venture-detail-page .btn-back {
+  display: inline-block;
+  background: #6c757d;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  margin-bottom: 25px;
+  transition: all 0.2s;
+}
+
+.venture-detail-page .btn-back:hover {
+  background: #5a6268;
+  transform: translateX(-3px);
+  color: white;
+}
+
+/* ============ GRID ============ */
+.venture-detail-page .detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 30px;
+}
+
+/* ============ COLUMNA IZQUIERDA ============ */
+.venture-detail-page .detail-left {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.venture-detail-page .info-card,
+.venture-detail-page .description-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 25px;
+}
+
+/* ============ IMAGEN ============ */
+.venture-detail-page .venture-image {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.venture-detail-page .venture-image img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* ============ TÍTULO ============ */
+.venture-detail-page .venture-title {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* ============ CATEGORÍA ============ */
+.venture-detail-page .venture-category-badge {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.venture-detail-page .venture-category-badge .badge {
+  background: #2a5bdc;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  display: inline-block;
+}
+
+/* ============ CALIFICACIÓN ============ */
+.venture-detail-page .venture-rating {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.venture-detail-page .venture-rating .stars {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.venture-detail-page .venture-rating .star {
+  font-size: 1.2rem;
+  color: #ddd;
+}
+
+.venture-detail-page .venture-rating .star.filled {
+  color: #ffc107;
+}
+
+.venture-detail-page .rating-value {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-left: 5px;
+}
+
+.venture-detail-page .reviews-count {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-left: 5px;
+}
+
+/* ============ UBICACIÓN ============ */
+.venture-detail-page .venture-location {
+  text-align: center;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+/* ============ BOTONES DE ACCIÓN ============ */
+.venture-detail-page .action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.venture-detail-page .btn-like,
+.venture-detail-page .btn-contact,
+.venture-detail-page .btn-follow {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
   cursor: pointer;
-  transition: transform .2s, box-shadow .2s;
+  font-weight: 500;
+  background: white;
+  transition: all 0.2s;
+  min-width: 80px;
+  text-align: center;
 }
 
-.producto-card:hover {
+.venture-detail-page .btn-like {
+  color: #dc3545;
+}
+
+.venture-detail-page .btn-like.liked {
+  background: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+.venture-detail-page .btn-contact {
+  background: #2a5bdc;
+  color: white;
+  border-color: #2a5bdc;
+}
+
+.venture-detail-page .btn-follow {
+  background: #6c757d;
+  color: white;
+  border-color: #6c757d;
+}
+
+.venture-detail-page .btn-like:hover,
+.venture-detail-page .btn-contact:hover,
+.venture-detail-page .btn-follow:hover {
+  transform: translateY(-2px);
+}
+
+/* ============ DESCRIPCIÓN ============ */
+.venture-detail-page .description-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.venture-detail-page .description-card p {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* ============ COLUMNA DERECHA ============ */
+.venture-detail-page .detail-right {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* ============ TABS ============ */
+.venture-detail-page .tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.venture-detail-page .tab {
+  flex: 1;
+  padding: 12px;
+  background: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.venture-detail-page .tab.active {
+  background: #2a5bdc;
+  color: white;
+}
+
+/* ============ PRODUCTOS ============ */
+.venture-detail-page .products-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.venture-detail-page .products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.venture-detail-page .product-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px;
+  transition: transform 0.2s;
+}
+
+.venture-detail-page .product-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(0,0,0,.12);
 }
 
-/* Para las estrellas en reseñas */
-.text-warning {
-  color: #ffc107 !important;
+.venture-detail-page .product-info h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
 }
 
-/* Ajustes responsive adicionales */
+.venture-detail-page .product-description {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 10px;
+}
+
+.venture-detail-page .product-price {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #28a745;
+  margin-bottom: 8px;
+}
+
+.venture-detail-page .product-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  margin-bottom: 12px;
+}
+
+.venture-detail-page .stock.in-stock {
+  color: #28a745;
+}
+
+.venture-detail-page .stock.out-stock {
+  color: #dc3545;
+}
+
+.venture-detail-page .status.active {
+  color: #28a745;
+}
+
+.venture-detail-page .status.inactive {
+  color: #6c757d;
+}
+
+.venture-detail-page .btn-add-to-cart {
+  width: 100%;
+  padding: 8px;
+  background: #2a5bdc;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.venture-detail-page .btn-add-to-cart:hover {
+  background: #1e4ac4;
+}
+
+/* ============ RESEÑAS ============ */
+.venture-detail-page .reviews-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.venture-detail-page .reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.venture-detail-page .review-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.venture-detail-page .review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.venture-detail-page .reviewer-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.venture-detail-page .reviewer-info .avatar {
+  width: 40px;
+  height: 40px;
+  background: #2a5bdc;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.venture-detail-page .review-date {
+  font-size: 0.7rem;
+  color: #6c757d;
+}
+
+.venture-detail-page .review-stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.venture-detail-page .review-stars .star {
+  font-size: 0.9rem;
+  color: #ddd;
+}
+
+.venture-detail-page .review-stars .star.filled {
+  color: #ffc107;
+}
+
+.venture-detail-page .review-stars .rating {
+  margin-left: 5px;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+.venture-detail-page .review-comment {
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+/* ============ CONTACTO ============ */
+.venture-detail-page .contact-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.venture-detail-page .contact-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.venture-detail-page .contact-info div {
+  margin-bottom: 6px;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.venture-detail-page .contact-info strong {
+  color: #333;
+}
+
+.venture-detail-page .contact-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.venture-detail-page .contact-buttons button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  color: white;
+  transition: all 0.2s;
+}
+
+.venture-detail-page .contact-buttons button:hover {
+  transform: translateY(-2px);
+}
+
+.venture-detail-page .btn-whatsapp {
+  background: #25d366;
+}
+
+.venture-detail-page .btn-email {
+  background: #dc3545;
+}
+
+.venture-detail-page .btn-web {
+  background: #17a2b8;
+}
+
+/* ============ EMPTY STATE ============ */
+.venture-detail-page .empty-message {
+  text-align: center;
+  padding: 30px;
+  color: #6c757d;
+}
+
+.venture-detail-page .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.venture-detail-page .empty-message h4 {
+  color: #333;
+  margin-bottom: 5px;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 992px) {
+  .venture-detail-page .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
-  .container {
-    padding-left: 15px;
-    padding-right: 15px;
+  .venture-detail-page .action-buttons {
+    flex-direction: column;
+  }
+  
+  .venture-detail-page .products-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .venture-detail-page .contact-buttons {
+    flex-direction: column;
+  }
+  
+  .venture-detail-page .tabs {
+    flex-direction: column;
+  }
+  
+  .venture-detail-page .venture-title {
+    font-size: 1.4rem;
+  }
+  
+  .venture-detail-page .review-header {
+    flex-direction: column;
+    gap: 10px;
   }
 }

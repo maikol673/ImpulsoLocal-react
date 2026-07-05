@@ -1,105 +1,118 @@
-/*Login.jsx - Página de inicio de sesión*/
+/**
+ * Login.jsx - Página de inicio de sesión
+ * AHORA CON API REAL
+ */
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { login } from '../../services/api';
 import './Login.css';
 import logo from '../../assets/logo.png';
 
 const Login = () => {
-  // Hook para redirigir después del login
-  const navigate = useNavigate();
-  
-  // Estados para los campos del formulario
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');  // Para mostrar errores
+    const navigate = useNavigate();
+    
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-  /**
-    @param {Event} e 
-   */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(''); 
-    
-    // Validación básica
-    if (!email || !password) {
-      setError('Please fill in all fields');
-      return;
-    }
-    
-    // Aquí iría la llamada al backend para autenticar
-    console.log('Login attempt:', { email, password });
-    
-    // Simular login exitoso
-    alert('Login successful!');
-    navigate('/');  
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
 
-  return (
-    <div className="login-page">
-      <div className="auth-container">
-        {/* Logo con enlace al home */}
-        <div className="auth-logo">
-          <Link to="/">
-            <img src={logo} alt="Entrepreneurs Ecosystem" />
-          </Link>
+        if (!email || !password) {
+            setError('Por favor ingresa email y contraseña');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            console.log('📡 Intentando login con:', { email, password });
+            const response = await login(email, password);
+            console.log('✅ Login exitoso:', response);
+            
+            // Guardar usuario en localStorage
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('user', JSON.stringify(response.user));
+            
+            navigate('/profile');
+            
+        } catch (err) {
+            console.error('❌ Error en login:', err);
+            setError(err.message || 'Credenciales inválidas');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="login-page">
+            <div className="auth-container">
+                <div className="auth-logo">
+                    <Link to="/">
+                        <img src={logo} alt="Plataforma" />
+                    </Link>
+                </div>
+                
+                <h1 className="auth-title">Iniciar Sesión</h1>
+                <p className="auth-subtitle">Ingresa a tu cuenta</p>
+                
+                {error && (
+                    <div className="error-message">
+                        <i className="fas fa-exclamation-circle"></i> {error}
+                    </div>
+                )}
+                
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label htmlFor="email">Correo electrónico</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            placeholder="tu@email.com" 
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            disabled={loading}
+                            required 
+                        />
+                    </div>
+                    
+                    <div className="form-group">
+                        <label htmlFor="password">Contraseña</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            placeholder="Tu contraseña" 
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            disabled={loading}
+                            required 
+                        />
+                    </div>
+                    
+                    <button 
+                        type="submit" 
+                        className="auth-button"
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <>
+                                <i className="fas fa-spinner fa-spin"></i> Ingresando...
+                            </>
+                        ) : (
+                            'Ingresar'
+                        )}
+                    </button>
+                </form>
+                
+                <div className="auth-footer">
+                    ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
+                </div>
+            </div>
         </div>
-        
-        <h1 className="auth-title">Welcome Back</h1>
-        <p className="auth-subtitle">Log in to your account</p>
-        
-        {/* Mostrar error si existe */}
-        {error && <div className="error-message">{error}</div>}
-        
-        <form onSubmit={handleSubmit}>
-          {/* Campo de email */}
-          <div className="form-group">
-            <label htmlFor="email">Email Address</label>
-            <input 
-              type="email" 
-              id="email" 
-              placeholder="your@email.com" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required 
-            />
-          </div>
-          
-          {/* Campo de contraseña */}
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input 
-              type="password" 
-              id="password" 
-              placeholder="Enter your password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required 
-            />
-          </div>
-          
-          {/* Opciones adicionales */}
-          <div className="form-options">
-            <label className="checkbox-label">
-              <input type="checkbox" /> Remember me
-            </label>
-            <Link to="/forgot-password" className="forgot-link">
-              Forgot password?
-            </Link>
-          </div>
-          
-          {/* Botón de envío */}
-          <button type="submit" className="auth-button">
-            Sign In
-          </button>
-        </form>
-        
-        {/* Enlace a registro para nuevos usuarios */}
-        <div className="auth-footer">
-          Don't have an account? <Link to="/register">Create account</Link>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Login;

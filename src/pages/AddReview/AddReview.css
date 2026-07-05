@@ -1,0 +1,214 @@
+/**
+ * AddReview.css - Estilos para Agregar Reseña
+ */
+
+.add-review-page {
+  min-height: calc(100vh - 200px);
+  background: #f5f7fa;
+  padding: 40px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ============ TARJETA ============ */
+.review-card {
+  background: white;
+  padding: 35px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.review-title {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 1.6rem;
+}
+
+.review-subtitle {
+  color: #666;
+  margin-bottom: 25px;
+  font-size: 1rem;
+}
+
+.review-subtitle strong {
+  color: #333;
+}
+
+/* ============ ESTRELLAS ============ */
+.stars-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.star {
+  font-size: 2rem;
+  cursor: pointer;
+  color: #ddd;
+  transition: color 0.2s, transform 0.2s;
+  user-select: none;
+}
+
+.star:hover {
+  transform: scale(1.1);
+}
+
+.star.filled {
+  color: #ffc107;
+}
+
+/* ============ FORMULARIO ============ */
+.review-form {
+  margin-top: 10px;
+}
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background: #f8f9fa;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #2a5bdc;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(42, 91, 220, 0.1);
+}
+
+.form-control.error {
+  border-color: #dc3545;
+  background: #fff5f5;
+}
+
+.form-control::placeholder {
+  color: #adb5bd;
+}
+
+/* ============ ERRORES ============ */
+.error-message {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+/* ============ BOTONES ============ */
+.form-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.btn-submit {
+  flex: 1;
+  background: #28a745;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #218838;
+  transform: translateY(-2px);
+}
+
+.btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  flex: 1;
+  background: #6c757d;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 6px;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 600;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-cancel:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+/* ============ LOADING ============ */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+/* ============ ERROR ============ */
+.error-container {
+  text-align: center;
+  padding: 40px;
+}
+
+.error-container h2 {
+  color: #dc3545;
+  margin-bottom: 20px;
+}
+
+.error-container .btn-back {
+  display: inline-block;
+  background: #6c757d;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .review-card {
+    padding: 20px;
+  }
+  
+  .review-title {
+    font-size: 1.3rem;
+  }
+  
+  .star {
+    font-size: 1.6rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .btn-submit,
+  .btn-cancel {
+    width: 100%;
+  }
+}

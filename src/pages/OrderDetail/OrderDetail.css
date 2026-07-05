@@ -1,0 +1,264 @@
+/**
+ * OrderDetail.css - Estilos para Detalle de Orden
+ */
+
+.order-detail-page {
+  min-height: calc(100vh - 200px);
+  background: #f5f7fa;
+  padding: 30px 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ============ TARJETA ============ */
+.order-detail-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.order-detail-header {
+  background: #28a745;
+  color: white;
+  padding: 16px 24px;
+}
+
+.order-detail-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.order-detail-body {
+  padding: 24px;
+}
+
+/* ============ INFORMACIÓN ============ */
+.info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 25px;
+}
+
+.info-col h6 {
+  color: #333;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.info-col p {
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.info-col p strong {
+  color: #333;
+}
+
+/* ============ BADGES ============ */
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: inline-block;
+  margin-left: 6px;
+}
+
+.badge-success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge-primary {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.badge-info {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.badge-warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge-danger {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.badge-secondary {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+/* ============ TABLA DE PRODUCTOS ============ */
+.products-title {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.products-table th {
+  background: #f8f9fc;
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #e3e6f0;
+  font-size: 0.85rem;
+}
+
+.products-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 0.9rem;
+}
+
+.products-table tbody tr:hover {
+  background: #f8f9fc;
+}
+
+.products-table tfoot {
+  font-weight: 600;
+}
+
+.products-table tfoot td {
+  padding: 12px;
+  border-top: 2px solid #e3e6f0;
+}
+
+.text-end {
+  text-align: right;
+}
+
+.text-muted {
+  color: #6c757d;
+}
+
+/* ============ BOTONES ============ */
+.order-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn-orders {
+  background: #2a5bdc;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-orders:hover {
+  background: #1e4ac4;
+  transform: translateY(-2px);
+  color: white;
+}
+
+.btn-shop-continue {
+  background: transparent;
+  color: #2a5bdc;
+  padding: 10px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  border: 1px solid #2a5bdc;
+  transition: all 0.2s;
+}
+
+.btn-shop-continue:hover {
+  background: #2a5bdc;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* ============ NO ENCONTRADO ============ */
+.not-found {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.not-found h2 {
+  color: #dc3545;
+  margin-bottom: 15px;
+}
+
+.not-found p {
+  color: #6c757d;
+  margin-bottom: 25px;
+}
+
+.btn-back-orders {
+  display: inline-block;
+  background: #2a5bdc;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-back-orders:hover {
+  background: #1e4ac4;
+  transform: translateY(-2px);
+  color: white;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .order-detail-body {
+    padding: 16px;
+  }
+  
+  .info-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .order-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-orders,
+  .btn-shop-continue {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .products-table {
+    font-size: 0.8rem;
+  }
+  
+  .products-table th,
+  .products-table td {
+    padding: 6px 8px;
+  }
+}

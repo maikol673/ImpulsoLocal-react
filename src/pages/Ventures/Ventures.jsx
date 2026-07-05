@@ -1,66 +1,54 @@
-/* Ventures.jsx - Página de listado de emprendimientos*/
-import React, { useState } from 'react';
+/**
+ * Ventures.jsx - Página de listado de emprendimientos
+ * AHORA CON DATOS REALES DESDE LA API DE LARAVEL
+ */
+
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { getVentures, getCategories } from '../../services/api'; // ← IMPORTAR API
 import './Ventures.css';
 
 const Ventures = () => {
+  // Estados para datos
+  const [ventures, setVentures] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   // Estados para filtros
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
-  const [currentPage, setCurrentPage] = useState(1); 
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Categorías disponibles
-  const categories = ['All', 'Technology', 'Food', 'Services', 'Fashion', 'Crafts'];
+  // ✅ Cargar datos desde la API de Laravel
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        
+        // Cargar emprendimientos
+        const venturesData = await getVentures();
+        setVentures(venturesData);
+        
+        // Cargar categorías
+        const categoriesData = await getCategories();
+        // Mapear categorías para que coincidan con el formato esperado
+        const categoryNames = ['All', ...categoriesData.map(cat => cat.nombre)];
+        setCategories(categoryNames);
+        
+        setError(null);
+      } catch (err) {
+        console.error('Error cargando datos:', err);
+        setError(err.message || 'Error al cargar los datos');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
+  }, []);
 
-  // Datos de ejemplo (normalmente vendrían de una API)
-  const ventures = [
-    {
-      id: 1,
-      name: 'GreenTech Solutions',
-      category: 'Technology',
-      description: 'Tech solutions for urban agriculture and carbon footprint reduction.',
-      location: 'Bogotá, Colombia',
-      rating: 4.8,
-      reviews: 120,
-      featured: true,
-      image: 'https://images.unsplash.com/photo-1551434678-e076c223a692'
-    },
-    {
-      id: 2,
-      name: 'ArtesanaCo',
-      category: 'Crafts',
-      description: 'Platform connecting local artisans with international buyers.',
-      location: 'Medellín, Colombia',
-      rating: 4.5,
-      reviews: 89,
-      featured: false,
-      image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b'
-    },
-    {
-      id: 3,
-      name: 'EduSmart',
-      category: 'Technology',
-      description: 'Interactive learning platform for children with AI.',
-      location: 'Santiago, Chile',
-      rating: 4.9,
-      reviews: 210,
-      featured: false,
-      image: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df'
-    },
-    {
-      id: 4,
-      name: 'FoodyApp',
-      category: 'Food',
-      description: 'Restaurant discovery and food delivery platform.',
-      location: 'Lima, Perú',
-      rating: 4.6,
-      reviews: 156,
-      featured: true,
-      image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5'
-    }
-  ];
-
-  // Elementos por página 
+  // Elementos por página
   const itemsPerPage = 6;
   
   // Calcular índices para la paginación
@@ -69,9 +57,13 @@ const Ventures = () => {
   
   // Filtrar emprendimientos según búsqueda y categoría
   const filteredVentures = ventures.filter(venture => {
-    const matchesSearch = venture.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          venture.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = activeCategory === 'All' || venture.category === activeCategory;
+    const matchesSearch = venture.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          venture.descripcion?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Obtener nombre de categoría (puede venir como objeto o string)
+    let ventureCategory = venture.categoria?.nombre || venture.categoria || '';
+    const matchesCategory = activeCategory === 'All' || ventureCategory === activeCategory;
+    
     return matchesSearch && matchesCategory;
   });
   
@@ -79,10 +71,10 @@ const Ventures = () => {
   const currentVentures = filteredVentures.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredVentures.length / itemsPerPage);
   
-  // Función para cambiar de página 
+  // Función para cambiar de página
   const goToPage = (pageNumber) => {
     setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
   // Función para página siguiente
@@ -105,8 +97,40 @@ const Ventures = () => {
   const clearFilters = () => {
     setSearchTerm('');
     setActiveCategory('All');
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
+
+  // Mostrar loading
+  if (loading) {
+    return (
+      <div className="ventures-page">
+        <section className="hero">
+          <h1>Discover innovative ventures</h1>
+          <p>Explore projects that are transforming the entrepreneurial ecosystem</p>
+        </section>
+        <div className="loading-container">
+          <div className="spinner"></div>
+          <p>Cargando emprendimientos...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Mostrar error
+  if (error) {
+    return (
+      <div className="ventures-page">
+        <section className="hero">
+          <h1>Discover innovative ventures</h1>
+          <p>Explore projects that are transforming the entrepreneurial ecosystem</p>
+        </section>
+        <div className="error-container">
+          <p>❌ Error: {error}</p>
+          <button onClick={() => window.location.reload()}>Intentar de nuevo</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="ventures-page">
@@ -127,7 +151,7 @@ const Ventures = () => {
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                setCurrentPage(1); 
+                setCurrentPage(1);
               }}
             />
             <button className="search-button">
@@ -143,7 +167,7 @@ const Ventures = () => {
                 className={`category-btn ${activeCategory === category ? 'active' : ''}`}
                 onClick={() => {
                   setActiveCategory(category);
-                  setCurrentPage(1); 
+                  setCurrentPage(1);
                 }}
               >
                 {category}
@@ -169,21 +193,25 @@ const Ventures = () => {
                 {/* Imagen */}
                 <div 
                   className="venture-image" 
-                  style={{ backgroundImage: `url(${venture.image}?auto=format&fit=crop&w=500&q=60)` }}
+                  style={{ 
+                    backgroundImage: `url(${venture.imagen || 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=500&q=60'})` 
+                  }}
                 >
-                  {venture.featured && <span className="featured-badge">Featured</span>}
+                  {venture.destacado && <span className="featured-badge">Featured</span>}
                 </div>
                 
                 {/* Información */}
                 <div className="venture-content">
-                  <h3>{venture.name}</h3>
-                  <span className="venture-category">{venture.category}</span>
-                  <p className="venture-description">{venture.description}</p>
+                  <h3>{venture.nombre}</h3>
+                  <span className="venture-category">
+                    {venture.categoria?.nombre || venture.categoria || 'Sin categoría'}
+                  </span>
+                  <p className="venture-description">{venture.descripcion}</p>
                   
                   <div className="venture-meta">
-                    <span className="rating">⭐ {venture.rating}</span>
-                    <span className="reviews">({venture.reviews} reviews)</span>
-                    <span className="location">📍 {venture.location}</span>
+                    <span className="rating">⭐ {venture.calificacion || 'N/A'}</span>
+                    <span className="reviews">({venture.num_resenas || 0} reviews)</span>
+                    <span className="location">📍 {venture.ubicacion || 'Ubicación no especificada'}</span>
                   </div>
                   
                   <Link to={`/venture/${venture.id}`} className="btn-details">
@@ -194,7 +222,7 @@ const Ventures = () => {
             ))}
           </div>
           
-          {/* Paginación - AHORA SÍ SE USA setCurrentPage */}
+          {/* Paginación */}
           {totalPages > 1 && (
             <div className="pagination">
               <button 
@@ -205,7 +233,6 @@ const Ventures = () => {
                 ‹ Previous
               </button>
               
-              {/* Generar botones de página dinámicamente */}
               {[...Array(totalPages).keys()].map(number => (
                 <button
                   key={number + 1}

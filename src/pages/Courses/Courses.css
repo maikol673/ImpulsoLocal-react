@@ -1,0 +1,332 @@
+/**
+ * Courses.css - Estilos para Formación de Cursos
+ * VERSIÓN HOMOGÉNEA - Todos los botones en azul
+ */
+
+.courses-page {
+  min-height: calc(100vh - 200px);
+  background: #f5f7fa;
+  padding: 30px 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ============ HEADER ============ */
+.courses-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.courses-header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn-back-home-courses {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #6c757d;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-back-home-courses:hover {
+  background: #5a6268;
+  transform: translateX(-3px);
+  color: white;
+}
+
+.courses-title {
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0;
+}
+
+.courses-subtitle {
+  text-align: center;
+  font-size: 1.15rem;
+  color: #6c757d;
+  margin-bottom: 35px;
+}
+
+/* ============ GRID DE CURSOS ============ */
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+/* ============ TARJETA DE CURSO ============ */
+.course-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.course-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* ============ HEADER DEL CURSO - TODOS AZULES ============ */
+.course-header-card {
+  padding: 18px 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: linear-gradient(135deg, #2a5bdc, #1e4ac4);
+}
+
+.course-card-name {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* ============ BADGES DEL HEADER ============ */
+.course-card-badge {
+  padding: 3px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-warning {
+  background: #ffc107;
+  color: #212529;
+}
+
+.badge-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.badge-success {
+  background: #28a745;
+  color: white;
+}
+
+/* ============ CUERPO DEL CURSO ============ */
+.course-card-body {
+  padding: 18px 20px;
+}
+
+.course-card-badges {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.badge-duracion {
+  background: #6c757d;
+  color: white;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.badge-nivel {
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: white;
+  background: #2a5bdc;
+}
+
+.course-card-description {
+  color: #555;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+/* ============ CARACTERÍSTICAS ============ */
+.course-features {
+  background: #f8f9fa;
+  padding: 12px 16px;
+  border-radius: 8px;
+}
+
+.features-list-simple {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.features-list-simple li {
+  font-size: 0.85rem;
+  color: #555;
+  padding: 2px 0;
+}
+
+/* ============ FOOTER DEL CURSO ============ */
+.course-card-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #e9ecef;
+  background: #fafafa;
+}
+
+.course-next-date {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+/* ============ BOTONES - TODOS AZULES ============ */
+
+/* Botón Inscribirse - AZUL */
+.btn-enroll-course {
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: white;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 8px;
+  background: #2a5bdc; /* ← AZUL */
+}
+
+.btn-enroll-course:hover {
+  background: #1e4ac4; /* ← AZUL OSCURO */
+  transform: translateY(-2px);
+}
+
+/* Botón Login para inscribirse - AZUL */
+.btn-enroll-login-course {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 2px solid #2a5bdc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2a5bdc;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.btn-enroll-login-course:hover {
+  background: #2a5bdc;
+  color: white;
+}
+
+/* Botón Ver Detalles - AZUL */
+.btn-details-course {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 1px solid #2a5bdc; /* ← AZUL */
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #2a5bdc; /* ← AZUL */
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+  text-align: center;
+  width: 100%;
+}
+
+.btn-details-course:hover {
+  background: #2a5bdc;
+  color: white;
+}
+
+/* ============ SECCIÓN DE INFORMACIÓN ============ */
+.info-section {
+  margin-top: 45px;
+}
+
+.info-card {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.info-card h3 {
+  color: #333;
+  margin-bottom: 25px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 25px;
+}
+
+.info-item h5 {
+  color: #2a5bdc;
+  margin-bottom: 8px;
+}
+
+.info-item p {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .courses-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .courses-header-left {
+    flex-wrap: wrap;
+  }
+  
+  .btn-back-home-courses {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+  
+  .courses-title {
+    font-size: 1.4rem;
+  }
+  
+  .courses-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .course-card:hover {
+    transform: translateY(-4px);
+  }
+}
