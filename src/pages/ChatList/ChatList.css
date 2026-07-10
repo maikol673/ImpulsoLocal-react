@@ -8,13 +8,13 @@
   padding: 30px 0;
 }
 
-.container {
+.chat-list-page .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* ============ HEADER CON BOTÓN VOLVER ============ */
+/* ============ HEADER ============ */
 .chat-header {
   display: flex;
   justify-content: space-between;
@@ -30,7 +30,6 @@
   gap: 15px;
 }
 
-/* Botón Volver */
 .btn-back-home {
   display: inline-flex;
   align-items: center;
@@ -43,7 +42,6 @@
   font-weight: 500;
   font-size: 0.9rem;
   transition: all 0.2s;
-  white-space: nowrap;
 }
 
 .btn-back-home:hover {
@@ -112,7 +110,7 @@
 .conversations-card,
 .users-card {
   background: white;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
@@ -141,7 +139,7 @@
   font-size: 0.75rem;
 }
 
-/* ============ LISTA DE CONVERSACIONES ============ */
+/* ============ LISTA ============ */
 .conversations-list,
 .users-list {
   max-height: 400px;
@@ -234,20 +232,6 @@
   color: #6c757d;
 }
 
-/* ============ USUARIOS ============ */
-.user-item {
-  padding: 10px 20px;
-}
-
-.user-name {
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-.user-action {
-  margin-left: auto;
-}
-
 /* ============ ESTADOS VACÍOS ============ */
 .empty-conversations {
   text-align: center;
@@ -266,7 +250,7 @@
 
 .chat-area-card {
   background: white;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   flex: 1;
   display: flex;
@@ -304,14 +288,8 @@
 }
 
 @keyframes modalIn {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .modal-header {
@@ -416,15 +394,6 @@
   .chat-header {
     flex-direction: column;
     align-items: stretch;
-  }
-  
-  .chat-header-left {
-    flex-wrap: wrap;
-  }
-  
-  .btn-back-home {
-    font-size: 0.8rem;
-    padding: 6px 12px;
   }
   
   .btn-new-chat {

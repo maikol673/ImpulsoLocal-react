@@ -1,11 +1,11 @@
 /**
  * VentureDetail.jsx - Detalle de Emprendimiento
- * CON API REAL
+ * CON API REAL - CON SOPORTE DE IMÁGENES - CON AGREGAR AL CARRITO
  */
 
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { getVentureById, getProductsByVenture, getReviews, toggleLike } from '../../services/api';
+import { getVentureById, getProductsByVenture, getReviews, toggleLike, BASE_URL, addToCart } from '../../services/api';
 import './VentureDetail.css';
 
 const VentureDetail = () => {
@@ -19,25 +19,30 @@ const VentureDetail = () => {
     const [error, setError] = useState(null);
     const [userHasLiked, setUserHasLiked] = useState(false);
     const [activeTab, setActiveTab] = useState('products');
+    const [imageError, setImageError] = useState(false);
+    const [imgVersion, setImgVersion] = useState(null);
+    const [addingToCart, setAddingToCart] = useState(false);
 
-    // Obtener datos del emprendimiento
+    // Obtener usuario logueado
+    const loggedUser = JSON.parse(localStorage.getItem('user') || '{}');
+
     useEffect(() => {
         const loadVentureData = async () => {
             setLoading(true);
             setError(null);
+            setImageError(false);
             
             try {
                 console.log(`📡 Cargando emprendimiento ID: ${id}`);
                 
-                // Obtener emprendimiento
                 const ventureData = await getVentureById(id);
                 setVenture(ventureData);
                 
-                // Obtener productos
+                setImgVersion(Date.now());
+                
                 const productsData = await getProductsByVenture(id);
                 setProducts(productsData);
                 
-                // Obtener reseñas
                 const reviewsData = await getReviews(id);
                 setReviews(reviewsData);
                 
@@ -77,6 +82,43 @@ const VentureDetail = () => {
         }
     };
 
+    // ✅ AGREGAR AL CARRITO
+    const handleAddToCart = async (productId, productName) => {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        
+        if (!user.id) {
+            alert('Debes iniciar sesión para agregar productos al carrito');
+            navigate('/login');
+            return;
+        }
+        
+        setAddingToCart(true);
+        
+        try {
+            const result = await addToCart({
+                usuario_id: user.id,
+                producto_id: productId,
+                cantidad: 1
+            });
+            
+            alert(`✅ ${productName} agregado al carrito`);
+            console.log('🛒 Producto agregado:', result);
+            
+        } catch (err) {
+            console.error('❌ Error al agregar al carrito:', err);
+            alert(err.message || 'Error al agregar al carrito');
+        } finally {
+            setAddingToCart(false);
+        }
+    };
+
+    const getImageUrl = (imagen) => {
+        if (!imagen) return null;
+        if (imagen.startsWith('http')) return imagen;
+        const url = `${BASE_URL}${imagen}`;
+        return imgVersion ? `${url}?t=${imgVersion}` : url;
+    };
+
     if (loading) {
         return (
             <div className="container text-center py-5">
@@ -106,29 +148,36 @@ const VentureDetail = () => {
         );
     }
 
+    const isOwner = loggedUser.id && venture.usuario_id === loggedUser.id;
+
     return (
         <div className="venture-detail-page">
             <div className="container">
                 
-                {/* Botón Volver */}
                 <Link to="/ventures" className="btn-back">
                     ← Volver al listado
                 </Link>
 
                 <div className="detail-grid">
                     
-                    {/* COLUMNA IZQUIERDA */}
                     <div className="detail-left">
                         
-                        {/* Información Principal */}
                         <div className="info-card">
                             
-                            {/* Imagen */}
-                            {venture.imagen && (
-                                <div className="venture-image">
-                                    <img src={venture.imagen} alt={venture.nombre} />
-                                </div>
-                            )}
+                            <div className="venture-image">
+                                {venture.imagen && !imageError ? (
+                                    <img 
+                                        src={getImageUrl(venture.imagen)} 
+                                        alt={venture.nombre}
+                                        onError={() => {
+                                            console.warn('❌ Error cargando imagen:', venture.imagen);
+                                            setImageError(true);
+                                        }}
+                                    />
+                                ) : (
+                                    <div className="no-image-placeholder">📦</div>
+                                )}
+                            </div>
                             
                             <h1 className="venture-title">{venture.nombre}</h1>
                             
@@ -154,7 +203,6 @@ const VentureDetail = () => {
                                 <i className="fas fa-map-marker-alt"></i> {venture.ubicacion || 'Ubicación no especificada'}
                             </div>
                             
-                            {/* Botones de acción */}
                             <div className="action-buttons">
                                 <button 
                                     className={`btn-like ${userHasLiked ? 'liked' : ''}`}
@@ -167,17 +215,14 @@ const VentureDetail = () => {
                             </div>
                         </div>
                         
-                        {/* Descripción */}
                         <div className="description-card">
                             <h3>📄 Descripción</h3>
                             <p>{venture.descripcion}</p>
                         </div>
                     </div>
 
-                    {/* COLUMNA DERECHA */}
                     <div className="detail-right">
                         
-                        {/* Tabs */}
                         <div className="tabs">
                             <button 
                                 className={`tab ${activeTab === 'products' ? 'active' : ''}`}
@@ -193,13 +238,31 @@ const VentureDetail = () => {
                             </button>
                         </div>
                         
-                        {/* Productos */}
+                        {/* ============ PRODUCTOS ============ */}
                         {activeTab === 'products' && (
                             <div className="products-section">
+                                {isOwner && (
+                                    <div className="add-product-button-container">
+                                        <Link to={`/add-product/${venture.id}`} className="btn-add-product">
+                                            ➕ Agregar Producto
+                                        </Link>
+                                    </div>
+                                )}
+                                
                                 {products.length > 0 ? (
                                     <div className="products-grid">
                                         {products.map(product => (
                                             <div key={product.id} className="product-card">
+                                                {product.imagen && (
+                                                    <img 
+                                                        src={getImageUrl(product.imagen)} 
+                                                        alt={product.nombre}
+                                                        className="product-image"
+                                                        onError={(e) => {
+                                                            e.target.style.display = 'none';
+                                                        }}
+                                                    />
+                                                )}
                                                 <div className="product-info">
                                                     <h4>{product.nombre}</h4>
                                                     <p className="product-description">{product.descripcion}</p>
@@ -212,8 +275,26 @@ const VentureDetail = () => {
                                                             {product.estado === 'activo' ? '✅ Activo' : '❌ Inactivo'}
                                                         </span>
                                                     </div>
-                                                    <button className="btn-add-to-cart">
-                                                        🛒 Agregar al carrito
+
+                                                    {isOwner && (
+                                                        <Link to={`/edit-product/${product.id}`} className="btn-edit-product">
+                                                            ✏️ Editar
+                                                        </Link>
+                                                    )}
+                                                    
+                                                    {/* ✅ BOTÓN AGREGAR AL CARRITO */}
+                                                    <button 
+                                                        className="btn-add-to-cart"
+                                                        onClick={() => handleAddToCart(product.id, product.nombre)}
+                                                        disabled={addingToCart}
+                                                    >
+                                                        {addingToCart ? (
+                                                            <>
+                                                                <i className="fas fa-spinner fa-spin"></i> Agregando...
+                                                            </>
+                                                        ) : (
+                                                            '🛒 Agregar al carrito'
+                                                        )}
                                                     </button>
                                                 </div>
                                             </div>
@@ -227,9 +308,17 @@ const VentureDetail = () => {
                             </div>
                         )}
                         
-                        {/* Reseñas */}
+                        {/* ============ RESEÑAS ============ */}
                         {activeTab === 'reviews' && (
                             <div className="reviews-section">
+                                {loggedUser.id && (
+                                    <div className="add-review-button-container">
+                                        <Link to={`/add-review/${venture.id}`} className="btn-add-review">
+                                            ⭐ Dejar Reseña
+                                        </Link>
+                                    </div>
+                                )}
+                                
                                 {reviews.length > 0 ? (
                                     <div className="reviews-list">
                                         {reviews.map(review => (
@@ -269,7 +358,6 @@ const VentureDetail = () => {
                             </div>
                         )}
                         
-                        {/* Contacto */}
                         <div className="contact-card">
                             <h3>📞 Contacto</h3>
                             <div className="contact-info">

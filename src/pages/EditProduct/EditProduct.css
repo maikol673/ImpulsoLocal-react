@@ -1,62 +1,62 @@
 /**
- * AddProduct.css - Estilos para Agregar Producto
+ * EditProduct.css - Estilos para Editar Producto
  */
 
-.add-product-page {
+.edit-product-page {
   min-height: calc(100vh - 200px);
   background: #f5f7fa;
   padding: 30px 0;
 }
 
-.add-product-page .container {
+.edit-product-page .container {
   max-width: 800px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
 /* ============ TARJETA ============ */
-.add-product-page .product-card {
+.edit-product-page .product-card {
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
 
-.add-product-page .product-header {
-  background: #28a745;
-  color: white;
+.edit-product-page .product-header {
+  background: #ffc107;
+  color: #212529;
   padding: 16px 24px;
 }
 
-.add-product-page .product-title {
+.edit-product-page .product-title {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
 }
 
-.add-product-page .product-body {
+.edit-product-page .product-body {
   padding: 24px;
 }
 
 /* ============ ALERTAS ============ */
-.add-product-page .alert {
+.edit-product-page .alert {
   padding: 12px 16px;
   border-radius: 6px;
   margin-bottom: 20px;
 }
 
-.add-product-page .alert-danger {
+.edit-product-page .alert-danger {
   background: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
 
 /* ============ FORMULARIO ============ */
-.add-product-page .form-group {
+.edit-product-page .form-group {
   margin-bottom: 20px;
 }
 
-.add-product-page .form-label {
+.edit-product-page .form-label {
   display: block;
   margin-bottom: 6px;
   font-weight: 600;
@@ -64,7 +64,7 @@
   font-size: 0.9rem;
 }
 
-.add-product-page .form-control {
+.edit-product-page .form-control {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid #ced4da;
@@ -74,25 +74,25 @@
   background: white;
 }
 
-.add-product-page .form-control:focus {
+.edit-product-page .form-control:focus {
   outline: none;
   border-color: #2a5bdc;
   box-shadow: 0 0 0 3px rgba(42, 91, 220, 0.1);
 }
 
-.add-product-page .form-control.error {
+.edit-product-page .form-control.error {
   border-color: #dc3545;
 }
 
-.add-product-page .form-control.error:focus {
+.edit-product-page .form-control.error:focus {
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
 }
 
-.add-product-page .form-control::placeholder {
+.edit-product-page .form-control::placeholder {
   color: #adb5bd;
 }
 
-.add-product-page .form-select {
+.edit-product-page .form-select {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid #ced4da;
@@ -101,39 +101,59 @@
   background: white;
 }
 
-.add-product-page .form-select:focus {
+.edit-product-page .form-select:focus {
   outline: none;
   border-color: #2a5bdc;
   box-shadow: 0 0 0 3px rgba(42, 91, 220, 0.1);
 }
 
-.add-product-page .error-text {
+.edit-product-page .error-text {
   color: #dc3545;
   font-size: 0.8rem;
   margin-top: 4px;
   display: block;
 }
 
-.add-product-page textarea.form-control {
+.edit-product-page textarea.form-control {
   resize: vertical;
   min-height: 100px;
 }
 
-.add-product-page .form-hint {
+.edit-product-page .form-hint {
   color: #6c757d;
   font-size: 0.75rem;
   margin-top: 4px;
   display: block;
 }
 
+/* ============ IMAGEN ACTUAL ============ */
+.edit-product-page .current-image {
+  margin-top: 10px;
+}
+
+.edit-product-page .current-image small {
+  display: block;
+  color: #6c757d;
+  font-size: 0.8rem;
+  margin-bottom: 5px;
+}
+
+.edit-product-page .current-image img {
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  object-fit: cover;
+}
+
 /* ============ PREVIEW DE IMAGEN ============ */
-.add-product-page .image-preview-container {
+.edit-product-page .image-preview-container {
   position: relative;
   display: inline-block;
   margin-top: 12px;
 }
 
-.add-product-page .image-preview {
+.edit-product-page .image-preview {
   max-width: 200px;
   max-height: 150px;
   border-radius: 8px;
@@ -141,7 +161,7 @@
   object-fit: cover;
 }
 
-.add-product-page .btn-remove-image {
+.edit-product-page .btn-remove-image {
   position: absolute;
   top: -8px;
   right: -8px;
@@ -159,12 +179,12 @@
   transition: transform 0.2s;
 }
 
-.add-product-page .btn-remove-image:hover {
+.edit-product-page .btn-remove-image:hover {
   transform: scale(1.1);
 }
 
 /* ============ BOTONES ============ */
-.add-product-page .form-actions {
+.edit-product-page .form-actions {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
@@ -173,7 +193,7 @@
   border-top: 1px solid #e9ecef;
 }
 
-.add-product-page .btn-submit {
+.edit-product-page .btn-submit {
   background: #28a745;
   color: white;
   padding: 10px 24px;
@@ -185,17 +205,17 @@
   transition: all 0.3s;
 }
 
-.add-product-page .btn-submit:hover:not(:disabled) {
+.edit-product-page .btn-submit:hover:not(:disabled) {
   background: #218838;
   transform: translateY(-2px);
 }
 
-.add-product-page .btn-submit:disabled {
+.edit-product-page .btn-submit:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-.add-product-page .btn-cancel {
+.edit-product-page .btn-cancel {
   background: #6c757d;
   color: white;
   padding: 10px 24px;
@@ -205,14 +225,14 @@
   transition: all 0.3s;
 }
 
-.add-product-page .btn-cancel:hover {
+.edit-product-page .btn-cancel:hover {
   background: #5a6268;
   transform: translateY(-2px);
   color: white;
 }
 
 /* ============ ÉXITO ============ */
-.add-product-page .success-card {
+.edit-product-page .success-card {
   background: white;
   border-radius: 12px;
   padding: 50px 40px;
@@ -220,24 +240,24 @@
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
-.add-product-page .success-icon {
+.edit-product-page .success-icon {
   font-size: 4rem;
   margin-bottom: 20px;
 }
 
-.add-product-page .success-title {
+.edit-product-page .success-title {
   color: #28a745;
   margin-bottom: 15px;
   font-size: 1.8rem;
 }
 
-.add-product-page .success-text {
+.edit-product-page .success-text {
   color: #6c757d;
   margin-bottom: 25px;
   font-size: 1.1rem;
 }
 
-.add-product-page .btn-venture {
+.edit-product-page .btn-venture {
   display: inline-block;
   background: #2a5bdc;
   color: white;
@@ -248,7 +268,7 @@
   transition: all 0.3s;
 }
 
-.add-product-page .btn-venture:hover {
+.edit-product-page .btn-venture:hover {
   background: #1e4ac4;
   transform: translateY(-2px);
   color: white;
@@ -256,25 +276,25 @@
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 768px) {
-  .add-product-page .product-body {
+  .edit-product-page .product-body {
     padding: 16px;
   }
   
-  .add-product-page .form-actions {
+  .edit-product-page .form-actions {
     flex-direction: column;
   }
   
-  .add-product-page .btn-submit,
-  .add-product-page .btn-cancel {
+  .edit-product-page .btn-submit,
+  .edit-product-page .btn-cancel {
     width: 100%;
     text-align: center;
   }
   
-  .add-product-page .success-card {
+  .edit-product-page .success-card {
     padding: 30px 20px;
   }
   
-  .add-product-page .success-title {
+  .edit-product-page .success-title {
     font-size: 1.4rem;
   }
 }

@@ -5,8 +5,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getVentureById, updateVenture, getCategories } from '../../services/api';
+import { getVentureById, updateVentureWithImage, getCategories, BASE_URL } from '../../services/api';
 import './EditVenture.css';
+
 
 const EditVenture = () => {
     const { id } = useParams();
@@ -16,6 +17,8 @@ const EditVenture = () => {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [categories, setCategories] = useState([]);
+    const [previewImage, setPreviewImage] = useState(null);
+    const [currentImage, setCurrentImage] = useState(null);
     
     const [formData, setFormData] = useState({
         nombre: '',
@@ -25,12 +28,13 @@ const EditVenture = () => {
         email_contacto: '',
         telefono: '',
         sitio_web: '',
-        estado: 'activo'
+        estado: 'activo',
+        imagen: null
     });
     
     const [errors, setErrors] = useState({});
 
-    // Verificar autenticación
+    // Obtener usuario logueado
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (!user.id) {
         navigate('/login');
@@ -57,8 +61,13 @@ const EditVenture = () => {
                     email_contacto: ventureData.email_contacto || '',
                     telefono: ventureData.telefono || '',
                     sitio_web: ventureData.sitio_web || '',
-                    estado: ventureData.estado || 'activo'
+                    estado: ventureData.estado || 'activo',
+                    imagen: null
                 });
+                
+                if (ventureData.imagen) {
+                    setCurrentImage(ventureData.imagen);
+                }
                 
                 console.log('📝 Datos cargados:', ventureData);
                 
@@ -81,25 +90,46 @@ const EditVenture = () => {
         }
     };
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const tiposPermitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!tiposPermitidos.includes(file.type)) {
+                setErrors(prev => ({ ...prev, imagen: 'Formato no permitido. Usa JPG, PNG, GIF o WEBP' }));
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                setErrors(prev => ({ ...prev, imagen: 'La imagen no puede superar los 5MB' }));
+                return;
+            }
+            
+            setFormData(prev => ({ ...prev, imagen: file }));
+            
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+            
+            if (errors.imagen) {
+                setErrors(prev => ({ ...prev, imagen: '' }));
+            }
+        }
+    };
+
     const validateForm = () => {
         const newErrors = {};
         
         if (!formData.nombre.trim()) {
             newErrors.nombre = 'El nombre es obligatorio';
-        } else if (formData.nombre.length < 3) {
-            newErrors.nombre = 'El nombre debe tener al menos 3 caracteres';
         }
-        
         if (!formData.descripcion.trim()) {
             newErrors.descripcion = 'La descripción es obligatoria';
-        } else if (formData.descripcion.length < 20) {
-            newErrors.descripcion = 'La descripción debe tener al menos 20 caracteres';
         }
-        
         if (!formData.categoria_id) {
             newErrors.categoria_id = 'Selecciona una categoría';
         }
-        
         if (formData.email_contacto && !/\S+@\S+\.\S+/.test(formData.email_contacto)) {
             newErrors.email_contacto = 'Email inválido';
         }
@@ -119,14 +149,24 @@ const EditVenture = () => {
         setSubmitting(true);
         
         try {
-            const data = {
-                ...formData,
-                categoria_id: parseInt(formData.categoria_id)
-            };
+            const submitData = new FormData();
+            submitData.append('nombre', formData.nombre);
+            submitData.append('descripcion', formData.descripcion);
+            submitData.append('categoria_id', formData.categoria_id);
+            submitData.append('ubicacion', formData.ubicacion || '');
+            submitData.append('email_contacto', formData.email_contacto || '');
+            submitData.append('telefono', formData.telefono || '');
+            submitData.append('sitio_web', formData.sitio_web || '');
+            submitData.append('estado', formData.estado);
             
-            console.log('📡 Actualizando emprendimiento:', data);
+            if (formData.imagen) {
+                submitData.append('imagen', formData.imagen);
+                console.log('📸 Subiendo nueva imagen:', formData.imagen.name);
+            }
             
-            const response = await updateVenture(id, data);
+            console.log('📡 Actualizando emprendimiento...');
+            
+            const response = await updateVentureWithImage(id, submitData);
             console.log('✅ Emprendimiento actualizado:', response);
             
             alert('✅ Emprendimiento actualizado exitosamente');
@@ -159,7 +199,6 @@ const EditVenture = () => {
         <div className="edit-venture-page">
             <div className="container">
                 
-                {/* Botón Volver */}
                 <Link to={`/venture/${id}`} className="btn-back-edit">
                     ← Volver al detalle
                 </Link>
@@ -173,9 +212,8 @@ const EditVenture = () => {
                         </div>
                     )}
                     
-                    <form onSubmit={handleSubmit} className="edit-form">
+                    <form onSubmit={handleSubmit} encType="multipart/form-data">
                         
-                        {/* Nombre */}
                         <div className="form-group">
                             <label htmlFor="nombre">Nombre del emprendimiento *</label>
                             <input
@@ -189,7 +227,6 @@ const EditVenture = () => {
                             {errors.nombre && <span className="error-text">{errors.nombre}</span>}
                         </div>
                         
-                        {/* Descripción */}
                         <div className="form-group">
                             <label htmlFor="descripcion">Descripción *</label>
                             <textarea
@@ -203,7 +240,6 @@ const EditVenture = () => {
                             {errors.descripcion && <span className="error-text">{errors.descripcion}</span>}
                         </div>
                         
-                        {/* Categoría */}
                         <div className="form-group">
                             <label htmlFor="categoria_id">Categoría *</label>
                             <select
@@ -223,7 +259,6 @@ const EditVenture = () => {
                             {errors.categoria_id && <span className="error-text">{errors.categoria_id}</span>}
                         </div>
                         
-                        {/* Ubicación */}
                         <div className="form-group">
                             <label htmlFor="ubicacion">Ubicación</label>
                             <input
@@ -236,7 +271,6 @@ const EditVenture = () => {
                             />
                         </div>
                         
-                        {/* Email de contacto */}
                         <div className="form-group">
                             <label htmlFor="email_contacto">Email de contacto</label>
                             <input
@@ -250,7 +284,6 @@ const EditVenture = () => {
                             {errors.email_contacto && <span className="error-text">{errors.email_contacto}</span>}
                         </div>
                         
-                        {/* Teléfono */}
                         <div className="form-group">
                             <label htmlFor="telefono">Teléfono</label>
                             <input
@@ -263,7 +296,6 @@ const EditVenture = () => {
                             />
                         </div>
                         
-                        {/* Sitio web */}
                         <div className="form-group">
                             <label htmlFor="sitio_web">Sitio web</label>
                             <input
@@ -275,8 +307,49 @@ const EditVenture = () => {
                                 onChange={handleChange}
                             />
                         </div>
+
+                        {/* CAMPO DE IMAGEN */}
+                        <div className="form-group">
+                            <label htmlFor="imagen">Imagen del emprendimiento</label>
+                            <input
+                                type="file"
+                                id="imagen"
+                                name="imagen"
+                                className={`form-control ${errors.imagen ? 'error' : ''}`}
+                                onChange={handleImageChange}
+                                accept="image/jpeg,image/png,image/gif,image/webp"
+                            />
+                            {errors.imagen && <span className="error-text">{errors.imagen}</span>}
+                            <small className="form-hint">
+                                Formatos: JPG, PNG, GIF, WEBP. Máximo: 5MB
+                            </small>
+                            
+                            {/* Imagen actual */}
+                            {currentImage && !previewImage && (
+                                <div className="current-image">
+                                    <small>Imagen actual:</small>
+                                    <img src={`${BASE_URL}${currentImage}`} alt="Imagen actual" />
+                                </div>
+                            )}
+                            
+                            {/* Preview de nueva imagen */}
+                            {previewImage && (
+                                <div className="image-preview-container">
+                                    <img src={previewImage} alt="Preview" className="image-preview" />
+                                    <button 
+                                        type="button" 
+                                        className="btn-remove-image"
+                                        onClick={() => {
+                                            setPreviewImage(null);
+                                            setFormData(prev => ({ ...prev, imagen: null }));
+                                        }}
+                                    >
+                                        ✖
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                         
-                        {/* Estado */}
                         <div className="form-group">
                             <label htmlFor="estado">Estado</label>
                             <select
@@ -292,7 +365,6 @@ const EditVenture = () => {
                             </select>
                         </div>
                         
-                        {/* Botones */}
                         <div className="form-actions">
                             <Link to={`/venture/${id}`} className="btn-cancel">Cancelar</Link>
                             <button 

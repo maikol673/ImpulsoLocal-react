@@ -1,9 +1,9 @@
 /**
  * Login.jsx - Página de inicio de sesión
- * AHORA CON API REAL
+ * CON API REAL 
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../../services/api';
 import './Login.css';
@@ -11,11 +11,20 @@ import logo from '../../assets/logo.png';
 
 const Login = () => {
     const navigate = useNavigate();
+    const isMounted = useRef(true);
     
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // ✅ LIMPIAR AL DESMONTAR
+    React.useEffect(() => {
+        isMounted.current = true;
+        return () => {
+            isMounted.current = false;
+        };
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,19 +40,26 @@ const Login = () => {
         try {
             console.log('📡 Intentando login con:', { email, password });
             const response = await login(email, password);
-            console.log('✅ Login exitoso:', response);
             
-            // Guardar usuario en localStorage
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('user', JSON.stringify(response.user));
-            
-            navigate('/profile');
+            // ✅ SOLO ACTUALIZAR SI ESTÁ MONTADO
+            if (isMounted.current) {
+                console.log('✅ Login exitoso:', response);
+                
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('user', JSON.stringify(response.user));
+                
+                navigate('/profile');
+            }
             
         } catch (err) {
-            console.error('❌ Error en login:', err);
-            setError(err.message || 'Credenciales inválidas');
+            if (isMounted.current) {
+                console.error('❌ Error en login:', err);
+                setError(err.message || 'Credenciales inválidas');
+            }
         } finally {
-            setLoading(false);
+            if (isMounted.current) {
+                setLoading(false);
+            }
         }
     };
 

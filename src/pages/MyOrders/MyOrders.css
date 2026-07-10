@@ -8,7 +8,7 @@
   padding: 30px 0;
 }
 
-.container {
+.my-orders-page .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
@@ -24,6 +24,32 @@
   gap: 15px;
 }
 
+.orders-header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn-back-home-orders {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #6c757d;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-back-home-orders:hover {
+  background: #5a6268;
+  transform: translateX(-3px);
+  color: white;
+}
+
 .orders-title {
   font-size: 1.8rem;
   color: #333;
@@ -34,10 +60,10 @@
   background: #28a745;
   color: white;
   padding: 10px 24px;
-  border-radius: 30px;
+  border-radius: 6px;
   text-decoration: none;
   font-weight: 600;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .btn-shop:hover {
@@ -93,7 +119,7 @@
 /* ============ TABLA ============ */
 .table-card {
   background: white;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
@@ -205,7 +231,7 @@
 
 .mobile-order-card {
   background: white;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   margin-bottom: 15px;
   overflow: hidden;
@@ -250,9 +276,7 @@
   border-radius: 6px;
   text-decoration: none;
   font-weight: 500;
-  transition: background 0.2s;
-  border: none;
-  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .btn-detail-mobile:hover {
@@ -277,11 +301,13 @@
 .empty-title {
   color: #333;
   margin-bottom: 10px;
+  font-size: 1.3rem;
 }
 
 .empty-text {
   color: #6c757d;
   margin-bottom: 25px;
+  font-size: 1rem;
 }
 
 .empty-actions {
@@ -328,7 +354,11 @@
 @media (max-width: 768px) {
   .orders-header {
     flex-direction: column;
-    text-align: center;
+    align-items: stretch;
+  }
+  
+  .orders-header-left {
+    flex-wrap: wrap;
   }
   
   .btn-shop {
@@ -387,4 +417,62 @@
   .stat-card h4 {
     font-size: 1.2rem;
   }
+}
+
+/* Agregar al final del archivo MyOrders.css */
+
+/* ============ BOTONES DE ACCIÓN EN TABLA ============ */
+.action-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.btn-cancel-order {
+    background: #dc3545;
+    color: white;
+    padding: 4px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-cancel-order:hover:not(:disabled) {
+    background: #c82333;
+}
+
+.btn-cancel-order:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ============ MÓVIL ============ */
+.mobile-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.btn-cancel-order-mobile {
+    background: #dc3545;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.btn-cancel-order-mobile:hover:not(:disabled) {
+    background: #c82333;
+}
+
+.btn-cancel-order-mobile:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }

@@ -1,27 +1,36 @@
 /**
  * Profile.jsx - Perfil de Usuario
- * CON PREFERENCIAS - Exactamente como en la imagen
- * CON API REAL
+ * CON PREFERENCIAS - VERSIÓN ESTABLE CON LIMPIEZA
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getMyVentures } from '../../services/api';
+import { getMyVentures, BASE_URL } from '../../services/api';
 import './Profile.css';
-
-const BASE_URL = 'http://127.0.0.1:8000';
 
 const Profile = () => {
     const navigate = useNavigate();
+    const isMounted = useRef(true); // ✅ Para saber si el componente está montado
     
+    // ✅ OBTENER USUARIO DE LOCALSTORAGE
     const stored = JSON.parse(localStorage.getItem('user') || '{}');
     const user = stored.id ? stored : null;
     const userId = user?.id;
 
+    // ✅ ESTADOS
     const [ventures, setVentures] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // ✅ LIMPIAR FLAG AL DESMONTAR
+    useEffect(() => {
+        isMounted.current = true;
+        return () => {
+            isMounted.current = false;
+        };
+    }, []);
+
+    // ✅ CARGAR DATOS
     useEffect(() => {
         if (!userId) {
             navigate('/login');
@@ -34,28 +43,44 @@ const Profile = () => {
                 setError(null);
                 
                 const venturesData = await getMyVentures(userId);
-                setVentures(venturesData);
                 
-                console.log('📊 Perfil cargado:', { userId, ventures: venturesData });
+                // ✅ SOLO ACTUALIZAR SI EL COMPONENTE ESTÁ MONTADO
+                if (isMounted.current) {
+                    setVentures(venturesData);
+                    console.log('📊 Perfil cargado:', { userId, ventures: venturesData });
+                }
                 
             } catch (err) {
                 console.error('❌ Error cargando perfil:', err);
-                setError(err.message);
+                if (isMounted.current) {
+                    setError(err.message);
+                }
             } finally {
-                setLoading(false);
+                if (isMounted.current) {
+                    setLoading(false);
+                }
             }
         };
         
         loadProfileData();
     }, [userId, navigate]);
 
+    // ✅ FUNCIÓN PARA CERRAR SESIÓN
     const handleLogout = () => {
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('user');
         navigate('/login');
     };
 
-    if (loading) {
+    // ✅ FUNCIÓN PARA OBTENER URL DE IMAGEN
+    const getImageUrl = (imagen) => {
+        if (!imagen) return null;
+        if (imagen.startsWith('http')) return imagen;
+        return `${BASE_URL}${imagen}`;
+    };
+
+    // ✅ VERIFICAR USUARIO PRIMERO
+    if (!user) {
         return (
             <div className="container text-center py-5">
                 <div className="spinner-border text-primary" role="status">
@@ -66,6 +91,19 @@ const Profile = () => {
         );
     }
 
+    // ✅ LOADING
+    if (loading) {
+        return (
+            <div className="container text-center py-5">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
+                </div>
+                <p className="mt-2">Cargando tus emprendimientos...</p>
+            </div>
+        );
+    }
+
+    // ✅ ERROR
     if (error) {
         return (
             <div className="container text-center py-5">
@@ -75,11 +113,7 @@ const Profile = () => {
         );
     }
 
-    if (!user) {
-        return null;
-    }
-
-    // Métricas
+    // ✅ MÉTRICAS
     const totalVentures = ventures.length;
     const totalLikes = ventures.reduce((acc, v) => acc + (v.num_resenas || 0), 0);
     const totalVentas = 0;
@@ -97,10 +131,23 @@ const Profile = () => {
                             <div className="col-md-3 text-center">
                                 {user.avatar ? (
                                     <img 
-                                        src={`${BASE_URL}${user.avatar}`}
+                                        src={getImageUrl(user.avatar)}
                                         alt={user.full_name || user.username}
-                                        className="profile-avatar-placeholder"
-                                        style={{ objectFit: 'cover' }}
+                                        className="profile-avatar-image"
+                                        style={{ 
+                                            width: '120px', 
+                                            height: '120px', 
+                                            objectFit: 'cover',
+                                            borderRadius: '50%'
+                                        }}
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.parentElement.innerHTML = `
+                                                <div class="profile-avatar-placeholder">
+                                                    <span>${user.full_name?.charAt(0) || user.username?.charAt(0) || 'U'}</span>
+                                                </div>
+                                            `;
+                                        }}
                                     />
                                 ) : (
                                     <div className="profile-avatar-placeholder">
@@ -257,10 +304,21 @@ const Profile = () => {
                                         <div className="card h-100 shadow-sm venture-card">
                                             {venture.imagen ? (
                                                 <img 
-                                                    src={venture.imagen} 
+                                                    src={getImageUrl(venture.imagen)} 
                                                     className="card-img-top" 
                                                     alt={venture.nombre}
                                                     style={{ height: '180px', objectFit: 'cover' }}
+                                                    onError={(e) => {
+                                                        e.target.style.display = 'none';
+                                                        const parent = e.target.parentElement;
+                                                        if (parent) {
+                                                            parent.innerHTML = `
+                                                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:180px;">
+                                                                    <span class="text-muted">Sin imagen</span>
+                                                                </div>
+                                                            `;
+                                                        }
+                                                    }}
                                                 />
                                             ) : (
                                                 <div className="card-img-top bg-light d-flex align-items-center justify-content-center" 

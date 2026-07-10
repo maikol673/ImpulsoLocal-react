@@ -1,25 +1,26 @@
 /**
- * AddProduct.jsx - Agregar Producto a un Emprendimiento
+ * EditProduct.jsx - Editar Producto
  * CON API REAL Y SUBIDA DE IMAGENES
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { createProductWithImage } from '../../services/api';
-import './AddProduct.css';
+import { getProductById, updateProductWithImage, BASE_URL } from '../../services/api';
+import './EditProduct.css';
 
-const AddProduct = () => {
-    const { id } = useParams(); // ID del emprendimiento
+const EditProduct = () => {
+    const { id } = useParams(); // ID del producto
     const navigate = useNavigate();
     
-    // Obtener usuario logueado
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    
-    // ✅ TODOS los hooks primero, sin excepción
+    // ============================================================
+    // ✅ TODOS LOS HOOKS PRIMERO
+    // ============================================================
+    const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
+    const [currentImage, setCurrentImage] = useState(null);
     
     const [formData, setFormData] = useState({
         nombre: '',
@@ -32,14 +33,51 @@ const AddProduct = () => {
     
     const [errors, setErrors] = useState({});
 
-    // ✅ La validación de sesión va DESPUÉS de todos los hooks
-    if (!user.id) {
-        navigate('/login');
-        return null;
-    }
+    // ============================================================
+    // ✅ VERIFICAR LOGIN (dentro de un useEffect, para no romper el orden de los Hooks)
+    // ============================================================
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-    // Datos del emprendimiento (simulado para el título)
-    const ventureName = id === '1' ? 'Yupi' : id === '2' ? 'GreenTech' : 'Emprendimiento';
+    useEffect(() => {
+        if (!user.id) {
+            navigate('/login');
+        }
+    }, [user.id, navigate]);
+
+    // Cargar datos del producto
+    useEffect(() => {
+        if (!user.id) return; // evita cargar datos si no hay usuario logueado
+
+        const loadProduct = async () => {
+            try {
+                setLoading(true);
+                const data = await getProductById(id);
+                
+                setFormData({
+                    nombre: data.nombre || '',
+                    descripcion: data.descripcion || '',
+                    precio: data.precio || '',
+                    stock: data.stock || '',
+                    estado: data.estado || 'activo',
+                    imagen: null
+                });
+                
+                if (data.imagen) {
+                    setCurrentImage(data.imagen);
+                }
+                
+                console.log('📝 Producto cargado:', data);
+                
+            } catch (err) {
+                console.error('❌ Error cargando producto:', err);
+                setError(err.message || 'Error al cargar el producto');
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        loadProduct();
+    }, [id, user.id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -52,14 +90,12 @@ const AddProduct = () => {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Validar tipo de archivo
             const tiposPermitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             if (!tiposPermitidos.includes(file.type)) {
                 setErrors(prev => ({ ...prev, imagen: 'Formato no permitido. Usa JPG, PNG, GIF o WEBP' }));
                 return;
             }
             
-            // Validar tamaño (5MB máximo)
             if (file.size > 5 * 1024 * 1024) {
                 setErrors(prev => ({ ...prev, imagen: 'La imagen no puede superar los 5MB' }));
                 return;
@@ -67,7 +103,6 @@ const AddProduct = () => {
             
             setFormData(prev => ({ ...prev, imagen: file }));
             
-            // Crear preview
             const reader = new FileReader();
             reader.onloadend = () => {
                 setPreviewImage(reader.result);
@@ -129,48 +164,62 @@ const AddProduct = () => {
             submitData.append('precio', formData.precio);
             submitData.append('stock', formData.stock);
             submitData.append('estado', formData.estado);
-            submitData.append('emprendimiento_id', id);
             
             if (formData.imagen) {
                 submitData.append('imagen', formData.imagen);
-                console.log('📸 Subiendo imagen del producto:', formData.imagen.name);
+                console.log('📸 Subiendo nueva imagen:', formData.imagen.name);
             }
             
-            console.log('📡 Agregando producto al emprendimiento:', id);
-            
-            const response = await createProductWithImage(submitData);
-            console.log('✅ Producto creado:', response);
+            console.log('📡 Actualizando producto...');
+            const response = await updateProductWithImage(id, submitData);
+            console.log('✅ Producto actualizado:', response);
             
             setSuccess(true);
             setSubmitting(false);
             
-            // Redirigir después de 2 segundos
             setTimeout(() => {
-                navigate(`/venture/${id}`);
+                navigate(`/venture/${response.data.emprendimiento_id}`);
             }, 1500);
             
         } catch (err) {
-            console.error('❌ Error al crear producto:', err);
+            console.error('❌ Error al actualizar producto:', err);
             if (err.errors) {
                 setErrors(err.errors);
             } else {
-                setError(err.message || 'Error al crear el producto');
+                setError(err.message || 'Error al actualizar el producto');
             }
             setSubmitting(false);
         }
     };
 
+    // ============================================================
+    // ✅ RENDERIZADO
+    // ============================================================
+    
+    if (loading) {
+        return (
+            <div className="edit-product-page">
+                <div className="container text-center py-5">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Cargando...</span>
+                    </div>
+                    <p className="mt-2">Cargando producto...</p>
+                </div>
+            </div>
+        );
+    }
+
     if (success) {
         return (
-            <div className="add-product-page">
+            <div className="edit-product-page">
                 <div className="container">
                     <div className="success-card">
                         <div className="success-icon">🎉</div>
-                        <h2 className="success-title">¡Producto Agregado!</h2>
+                        <h2 className="success-title">¡Producto Actualizado!</h2>
                         <p className="success-text">
-                            El producto ha sido agregado exitosamente al emprendimiento.
+                            El producto ha sido actualizado exitosamente.
                         </p>
-                        <Link to={`/venture/${id}`} className="btn-venture">
+                        <Link to={`/venture/${formData.emprendimiento_id}`} className="btn-venture">
                             📋 Ver Emprendimiento
                         </Link>
                     </div>
@@ -180,14 +229,12 @@ const AddProduct = () => {
     }
 
     return (
-        <div className="add-product-page">
+        <div className="edit-product-page">
             <div className="container">
                 <div className="product-card">
                     
                     <div className="product-header">
-                        <h5 className="product-title">
-                            ➕ Agregar Producto a "{ventureName}"
-                        </h5>
+                        <h5 className="product-title">✏️ Editar Producto</h5>
                     </div>
                     
                     <div className="product-body">
@@ -201,7 +248,6 @@ const AddProduct = () => {
                         <form onSubmit={handleSubmit} encType="multipart/form-data">
                             
                             <div className="row">
-                                {/* Nombre */}
                                 <div className="col-md-6">
                                     <div className="form-group">
                                         <label className="form-label">Nombre del Producto *</label>
@@ -217,7 +263,6 @@ const AddProduct = () => {
                                     </div>
                                 </div>
                                 
-                                {/* Precio */}
                                 <div className="col-md-6">
                                     <div className="form-group">
                                         <label className="form-label">Precio *</label>
@@ -236,7 +281,6 @@ const AddProduct = () => {
                                 </div>
                             </div>
 
-                            {/* Descripción */}
                             <div className="form-group">
                                 <label className="form-label">Descripción *</label>
                                 <textarea
@@ -245,13 +289,12 @@ const AddProduct = () => {
                                     rows="4"
                                     value={formData.descripcion}
                                     onChange={handleChange}
-                                    placeholder="Describe tu producto, sus características y beneficios..."
+                                    placeholder="Describe tu producto..."
                                 />
                                 {errors.descripcion && <span className="error-text">{errors.descripcion}</span>}
                             </div>
 
                             <div className="row">
-                                {/* Stock */}
                                 <div className="col-md-6">
                                     <div className="form-group">
                                         <label className="form-label">Stock Disponible *</label>
@@ -268,7 +311,6 @@ const AddProduct = () => {
                                     </div>
                                 </div>
                                 
-                                {/* Estado */}
                                 <div className="col-md-6">
                                     <div className="form-group">
                                         <label className="form-label">Estado *</label>
@@ -301,6 +343,15 @@ const AddProduct = () => {
                                     Formatos: JPG, PNG, GIF, WEBP. Máximo: 5MB
                                 </small>
                                 
+                                {/* Imagen actual */}
+                                {currentImage && !previewImage && (
+                                    <div className="current-image">
+                                        <small>Imagen actual:</small>
+                                        <img src={`${BASE_URL}${currentImage}`} alt="Imagen actual" />
+                                    </div>
+                                )}
+                                
+                                {/* Preview de nueva imagen */}
                                 {previewImage && (
                                     <div className="image-preview-container">
                                         <img src={previewImage} alt="Preview" className="image-preview" />
@@ -318,13 +369,12 @@ const AddProduct = () => {
                                 )}
                             </div>
 
-                            {/* Botones */}
                             <div className="form-actions">
                                 <Link to={`/venture/${id}`} className="btn-cancel">
                                     Cancelar
                                 </Link>
                                 <button type="submit" className="btn-submit" disabled={submitting}>
-                                    {submitting ? 'Guardando...' : '➕ Agregar Producto'}
+                                    {submitting ? 'Guardando...' : '💾 Guardar Cambios'}
                                 </button>
                             </div>
                         </form>
@@ -335,4 +385,4 @@ const AddProduct = () => {
     );
 };
 
-export default AddProduct;
+export default EditProduct;

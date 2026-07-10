@@ -5,8 +5,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getVentures, getCategories } from '../../services/api'; // ← IMPORTAR API
+import { getVentures, getCategories } from '../../services/api';
 import './Ventures.css';
+
+// ✅ DEFINIR LA URL BASE DE LA API
+const API_URL = 'http://127.0.0.1:8000';
 
 const Ventures = () => {
   // Estados para datos
@@ -32,7 +35,6 @@ const Ventures = () => {
         
         // Cargar categorías
         const categoriesData = await getCategories();
-        // Mapear categorías para que coincidan con el formato esperado
         const categoryNames = ['All', ...categoriesData.map(cat => cat.nombre)];
         setCategories(categoryNames);
         
@@ -48,6 +50,24 @@ const Ventures = () => {
     loadData();
   }, []);
 
+  // ✅ Construye la URL completa de la imagen
+  const getVentureImageUrl = (imagen) => {
+    // Si no hay imagen, usar placeholder
+    if (!imagen) {
+      return 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=500&q=60';
+    }
+    // Si ya es URL absoluta (http), devolverla
+    if (imagen.startsWith('http')) {
+      return imagen;
+    }
+    // Si es URL relativa (empieza con /), agregar la URL base
+    if (imagen.startsWith('/')) {
+      return `${API_URL}${imagen}`;
+    }
+    // Si es solo el nombre de archivo, construir la URL completa
+    return `${API_URL}/uploads/emprendimientos/${imagen}`;
+  };
+
   // Elementos por página
   const itemsPerPage = 6;
   
@@ -60,24 +80,21 @@ const Ventures = () => {
     const matchesSearch = venture.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           venture.descripcion?.toLowerCase().includes(searchTerm.toLowerCase());
     
-    // Obtener nombre de categoría (puede venir como objeto o string)
     let ventureCategory = venture.categoria?.nombre || venture.categoria || '';
     const matchesCategory = activeCategory === 'All' || ventureCategory === activeCategory;
     
     return matchesSearch && matchesCategory;
   });
   
-  // Aplicar paginación a los resultados filtrados
+  // Aplicar paginación
   const currentVentures = filteredVentures.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredVentures.length / itemsPerPage);
   
-  // Función para cambiar de página
   const goToPage = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
-  // Función para página siguiente
   const nextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -85,7 +102,6 @@ const Ventures = () => {
     }
   };
   
-  // Función para página anterior
   const prevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -93,14 +109,12 @@ const Ventures = () => {
     }
   };
   
-  // Función para limpiar filtros
   const clearFilters = () => {
     setSearchTerm('');
     setActiveCategory('All');
     setCurrentPage(1);
   };
 
-  // Mostrar loading
   if (loading) {
     return (
       <div className="ventures-page">
@@ -116,7 +130,6 @@ const Ventures = () => {
     );
   }
 
-  // Mostrar error
   if (error) {
     return (
       <div className="ventures-page">
@@ -134,16 +147,13 @@ const Ventures = () => {
 
   return (
     <div className="ventures-page">
-      {/* Hero de la página */}
       <section className="hero">
         <h1>Discover innovative ventures</h1>
         <p>Explore projects that are transforming the entrepreneurial ecosystem</p>
       </section>
 
-      {/* Sección de filtros */}
       <section className="filters-section">
         <div className="container">
-          {/* Barra de búsqueda */}
           <div className="search-bar">
             <input 
               type="text" 
@@ -154,12 +164,9 @@ const Ventures = () => {
                 setCurrentPage(1);
               }}
             />
-            <button className="search-button">
-              🔍 Search
-            </button>
+            <button className="search-button">🔍 Search</button>
           </div>
           
-          {/* Botones de categorías */}
           <div className="categories-filters">
             {categories.map(category => (
               <button 
@@ -177,30 +184,28 @@ const Ventures = () => {
         </div>
       </section>
 
-      {/* Listado de emprendimientos */}
       <section className="ventures-list-section">
         <div className="container">
-          {/* Mostrar contador de resultados */}
           <div className="results-count">
             Found {filteredVentures.length} ventures
             {filteredVentures.length > 0 && ` - Page ${currentPage} of ${totalPages}`}
           </div>
           
-          {/* Grid de tarjetas */}
           <div className="ventures-grid">
             {currentVentures.map(venture => (
               <div key={venture.id} className="venture-card">
-                {/* Imagen */}
+                {/* ✅ IMAGEN CORREGIDA */}
                 <div 
                   className="venture-image" 
                   style={{ 
-                    backgroundImage: `url(${venture.imagen || 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=500&q=60'})` 
+                    backgroundImage: `url(${getVentureImageUrl(venture.imagen)})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
                   }}
                 >
                   {venture.destacado && <span className="featured-badge">Featured</span>}
                 </div>
                 
-                {/* Información */}
                 <div className="venture-content">
                   <h3>{venture.nombre}</h3>
                   <span className="venture-category">
@@ -222,7 +227,6 @@ const Ventures = () => {
             ))}
           </div>
           
-          {/* Paginación */}
           {totalPages > 1 && (
             <div className="pagination">
               <button 
@@ -253,13 +257,10 @@ const Ventures = () => {
             </div>
           )}
           
-          {/* Mensaje cuando no hay resultados */}
           {filteredVentures.length === 0 && (
             <div className="no-results">
               <p>No ventures found matching your criteria.</p>
-              <button onClick={clearFilters}>
-                Clear filters
-              </button>
+              <button onClick={clearFilters}>Clear filters</button>
             </div>
           )}
         </div>

@@ -1,6 +1,5 @@
 /**
  * Header.css - Estilos del Header
- * Incluye estilos para el dropdown de usuario como en Django
  */
 
 .header {
@@ -44,43 +43,61 @@
 /* ============ BOTÓN LOGIN ============ */
 .btn-login {
   background-color: transparent;
-  color: var(--primary);
-  border: 2px solid var(--primary);
+  color: #2a5bdc;
+  border: 2px solid #2a5bdc;
 }
 
 .btn-login:hover {
-  background-color: var(--primary);
+  background-color: #2a5bdc;
   color: white;
 }
 
 /* ============ BOTÓN REGISTER ============ */
 .btn-signup {
-  background-color: var(--secondary);
-  color: white;
-  border: 2px solid var(--secondary);
+  background-color: transparent;
+  color: #28a745;
+  border: 2px solid #28a745;
 }
 
 .btn-signup:hover {
-  background-color: #218838;
-  border-color: #218838;
+  background-color: #28a745;
+  color: white;
+  border-color: #28a745;
 }
 
-/* ============ DROPDOWN (Menú de usuario) ============ */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-toggle {
-  display: flex;
+/* ============ BADGE DEL CARRITO ============ */
+.cart-badge {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  background: #dc3545;
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  margin-left: 8px;
+  flex-shrink: 0;
+  line-height: 1;
+  padding: 0;
 }
 
-.dropdown-toggle::after {
-  content: '▼';
-  font-size: 0.6rem;
-  margin-left: 4px;
+.cart-dropdown-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #dc3545;
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  margin-left: auto;
+  flex-shrink: 0;
+  line-height: 1;
+  padding: 0;
 }
 
 .dropdown-menu {
@@ -95,6 +112,7 @@
   margin-top: 8px;
   z-index: 1000;
   list-style: none;
+  border: 1px solid #e9ecef;
 }
 
 .dropdown-menu.show {
@@ -102,7 +120,9 @@
 }
 
 .dropdown-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 10px 20px;
   color: #333;
   text-decoration: none;
@@ -155,21 +175,6 @@
   background-color: #5a32a3;
   color: white;
   transform: translateY(-2px);
-}
-
-/* ============ BADGE PARA CARRITO ============ */
-.cart-dropdown-badge {
-  background: linear-gradient(135deg, #dc3545, #c82333);
-  color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  font-weight: bold;
-  margin-left: 8px;
 }
 
 /* ============ RESPONSIVE ============ */

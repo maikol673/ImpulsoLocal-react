@@ -181,3 +181,67 @@
     text-align: center;
   }
 }
+
+/* ============ IMAGEN ACTUAL ============ */
+.current-image {
+    margin-top: 10px;
+}
+
+.current-image small {
+    display: block;
+    color: #6c757d;
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+}
+
+.current-image img {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    object-fit: cover;
+}
+
+/* ============ PREVIEW DE IMAGEN ============ */
+.image-preview-container {
+    position: relative;
+    display: inline-block;
+    margin-top: 12px;
+}
+
+.image-preview {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    object-fit: cover;
+}
+
+.btn-remove-image {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.btn-remove-image:hover {
+    transform: scale(1.1);
+}
+
+.form-hint {
+    color: #6c757d;
+    font-size: 0.75rem;
+    margin-top: 4px;
+    display: block;
+}

@@ -8,7 +8,7 @@
   padding: 30px 0;
 }
 
-.container {
+.chat-detail-page .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
@@ -30,7 +30,7 @@
 
 .chat-users-card {
   background: white;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   width: 100%;
   overflow: hidden;
@@ -127,7 +127,7 @@
 
 .chat-card {
   background: white;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   width: 100%;
   overflow: hidden;
@@ -194,16 +194,6 @@
   font-size: 0.75rem;
 }
 
-.badge-admin {
-  background: #dc3545;
-  color: white;
-  padding: 1px 8px;
-  border-radius: 10px;
-  font-size: 0.6rem;
-  margin-left: 6px;
-  font-weight: 600;
-}
-
 .btn-delete-chat {
   background: none;
   border: none;
@@ -215,8 +205,13 @@
   font-size: 1rem;
 }
 
-.btn-delete-chat:hover {
+.btn-delete-chat:hover:not(:disabled) {
   background: #f8d7da;
+}
+
+.btn-delete-chat:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* ============ MENSAJES ============ */
@@ -319,6 +314,11 @@
   box-shadow: 0 0 0 3px rgba(42, 91, 220, 0.15);
 }
 
+.chat-input:disabled {
+  background: #e9ecef;
+  cursor: not-allowed;
+}
+
 .chat-input::placeholder {
   color: #adb5bd;
 }
@@ -378,17 +378,6 @@
   max-width: 450px;
   width: 90%;
   animation: modalIn 0.2s ease;
-}
-
-@keyframes modalIn {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
 }
 
 .modal-header {
@@ -488,51 +477,4 @@
   .chat-header-info .btn-back-chat {
     display: flex;
   }
-}
-
-
-.chat-detail-page {
-  min-height: calc(100vh - 200px);
-  background: #f5f7fa;
-  padding: 30px 0;
-}
-
-.chat-detail-page .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-/* ============ BOTÓN VOLVER ============ */
-.chat-detail-back {
-  margin-bottom: 20px;
-}
-
-.btn-back-chatlist {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #6c757d;
-  color: white;
-  padding: 8px 18px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.2s;
-}
-
-.btn-back-chatlist:hover {
-  background: #5a6268;
-  transform: translateX(-3px);
-  color: white;
-}
-
-/* ============ GRID ============ */
-.chat-detail-grid {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 20px;
-  height: calc(100vh - 250px);
-  min-height: 500px;
 }

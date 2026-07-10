@@ -1,377 +1,502 @@
 /**
  * api.js - Servicio para conectar con Laravel API
+ * VERSIÓN CORREGIDA: siempre envía Accept: application/json
+ * y detecta cuando el servidor responde HTML en vez de JSON
+ * (evita el error "Unexpected token '<'... is not valid JSON")
  */
 
-// URL de la API de Laravel
-const API_URL = 'http://127.0.0.1:8000/api';
+// URL base del servidor Laravel (sin /api) - para imágenes y archivos
+export const BASE_URL = 'http://127.0.0.1:8000';
 
-// Helper para manejar errores de respuesta
+// URL de la API de Laravel
+const API_URL = `${BASE_URL}/api`;
+
+
 const handleResponse = async (response) => {
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || error.error || 'Error en la petición');
+    const contentType = response.headers.get('content-type') || '';
+
+    if (!contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error(
+            `❌ El servidor respondió con status ${response.status} y contenido no-JSON:`,
+            text.slice(0, 800)
+        );
+        throw new Error(
+            `Error del servidor (${response.status}). Revisa la consola para ver el detalle (probablemente un error 500 de Laravel).`
+        );
     }
-    return response.json();
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || data.error || 'Error en la petición');
+    }
+
+    return data;
+};
+
+/**
+ * Wrapper central de fetch.
+ * - Agrega automáticamente 'Accept: application/json' (clave para que Laravel
+ *   devuelva JSON en los errores en vez de la página HTML de "Whoops").
+ * - Si el body NO es FormData, agrega 'Content-Type: application/json'.
+ * - Si el body ES FormData (subida de imágenes), deja que el navegador
+ *   ponga el Content-Type con el boundary correcto.
+ */
+const apiFetch = async (url, options = {}) => {
+    const isFormData = options.body instanceof FormData;
+
+    const headers = {
+        'Accept': 'application/json',
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+        ...options.headers,
+    };
+
+    // Agregar token de autenticación si existe
+    const token = localStorage.getItem('token');
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    try {
+        const response = await fetch(url, { ...options, headers });
+        return await handleResponse(response);
+    } catch (error) {
+        // Errores de red (servidor caído, CORS, sin conexión, etc.)
+        if (error instanceof TypeError) {
+            console.error('❌ Error de red o CORS:', error.message);
+            throw new Error('No se pudo conectar con el servidor. Verifica que el backend esté corriendo.');
+        }
+        throw error;
+    }
 };
 
 // ============ AUTENTICACIÓN ============
 
-/**
- * Iniciar sesión
- */
 export const login = async (email, password) => {
-    const response = await fetch(`${API_URL}/login`, {
+    return apiFetch(`${API_URL}/login`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
         body: JSON.stringify({ email, password }),
     });
-    return handleResponse(response);
 };
 
-/**
- * Registrar usuario
- */
 export const register = async (userData) => {
-    const response = await fetch(`${API_URL}/register`, {
+    return apiFetch(`${API_URL}/register`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
         body: JSON.stringify(userData),
     });
-    return handleResponse(response);
 };
 
 // ============ EMPRENDIMIENTOS ============
 
-/**
- * Obtener todos los emprendimientos
- */
 export const getVentures = async () => {
-    const response = await fetch(`${API_URL}/emprendimientos`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/emprendimientos`);
 };
 
-/**
- * Obtener un emprendimiento por ID
- */
 export const getVentureById = async (id) => {
-    const response = await fetch(`${API_URL}/emprendimientos/${id}`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/emprendimientos/${id}`);
 };
 
-/**
- * Crear un emprendimiento
- */
-export const createVenture = async (data) => {
-    const response = await fetch(`${API_URL}/emprendimientos`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
-    return handleResponse(response);
+export const createVentureWithImage = async (formData) => {
+    try {
+        return await apiFetch(`${API_URL}/emprendimientos`, {
+            method: 'POST',
+            body: formData,
+        });
+    } catch (error) {
+        console.error('❌ Error creando emprendimiento:', error);
+        throw error;
+    }
 };
 
-/**
- * Actualizar un emprendimiento
- */
-export const updateVenture = async (id, data) => {
-    const response = await fetch(`${API_URL}/emprendimientos/${id}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
-    return handleResponse(response);
+export const updateVentureWithImage = async (id, formData) => {
+    try {
+        return await apiFetch(`${API_URL}/emprendimientos/${id}`, {
+            method: 'POST',
+            body: formData,
+        });
+    } catch (error) {
+        console.error('❌ Error actualizando emprendimiento:', error);
+        throw error;
+    }
 };
 
-/**
- * Eliminar un emprendimiento
- */
 export const deleteVenture = async (id) => {
-    const response = await fetch(`${API_URL}/emprendimientos/${id}`, {
+    return apiFetch(`${API_URL}/emprendimientos/${id}`, {
         method: 'DELETE',
     });
-    return handleResponse(response);
 };
 
-/**
- * Obtener emprendimientos por categoría
- */
 export const getVenturesByCategory = async (categoriaId) => {
-    const response = await fetch(`${API_URL}/emprendimientos/categoria/${categoriaId}`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/emprendimientos/categoria/${categoriaId}`);
 };
 
-/**
- * Obtener emprendimientos de un usuario
- */
 export const getMyVentures = async (usuarioId) => {
-    const response = await fetch(`${API_URL}/emprendimientos/usuario/${usuarioId}`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/emprendimientos/usuario/${usuarioId}`);
 };
 
 // ============ CATEGORÍAS ============
 
-/**
- * Obtener todas las categorías
- */
 export const getCategories = async () => {
-    const response = await fetch(`${API_URL}/categorias`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/categorias`);
 };
 
 // ============ PRODUCTOS ============
 
-/**
- * Obtener productos de un emprendimiento
- */
 export const getProductsByVenture = async (emprendimientoId) => {
-    const response = await fetch(`${API_URL}/productos/emprendimiento/${emprendimientoId}`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/productos/emprendimiento/${emprendimientoId}`);
 };
 
-/**
- * Crear un producto
- */
-export const createProduct = async (data) => {
-    const response = await fetch(`${API_URL}/productos`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
-    return handleResponse(response);
+export const getProductById = async (id) => {
+    try {
+        return await apiFetch(`${API_URL}/productos/${id}`);
+    } catch (error) {
+        console.error('❌ Error obteniendo producto:', error);
+        throw error;
+    }
+};
+
+export const createProductWithImage = async (formData) => {
+    try {
+        return await apiFetch(`${API_URL}/productos`, {
+            method: 'POST',
+            body: formData,
+        });
+    } catch (error) {
+        console.error('❌ Error creando producto:', error);
+        throw error;
+    }
+};
+
+export const updateProductWithImage = async (id, formData) => {
+    try {
+        return await apiFetch(`${API_URL}/productos/${id}`, {
+            method: 'POST',
+            body: formData,
+        });
+    } catch (error) {
+        console.error('❌ Error actualizando producto:', error);
+        throw error;
+    }
 };
 
 // ============ RESEÑAS ============
 
-/**
- * Obtener reseñas de un emprendimiento
- */
 export const getReviews = async (emprendimientoId) => {
-    const response = await fetch(`${API_URL}/resenas/emprendimiento/${emprendimientoId}`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/resenas/emprendimiento/${emprendimientoId}`);
 };
 
-/**
- * Crear una reseña
- */
 export const createReview = async (data) => {
-    const response = await fetch(`${API_URL}/resenas`, {
+    return apiFetch(`${API_URL}/resenas`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
         body: JSON.stringify(data),
     });
-    return handleResponse(response);
+};
+
+export const updateReview = async (reviewId, data) => {
+    try {
+        return await apiFetch(`${API_URL}/resenas/${reviewId}`, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+    } catch (error) {
+        console.error('❌ Error actualizando reseña:', error);
+        throw error;
+    }
+};
+
+export const deleteReview = async (reviewId) => {
+    return apiFetch(`${API_URL}/resenas/${reviewId}`, {
+        method: 'DELETE',
+    });
 };
 
 // ============ TESTIMONIOS ============
 
-/**
- * Obtener testimonios aprobados
- */
 export const getTestimonials = async () => {
-    const response = await fetch(`${API_URL}/testimonios`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/testimonios`);
 };
 
-/**
- * Crear un testimonio
- */
 export const createTestimonial = async (data) => {
-    const response = await fetch(`${API_URL}/testimonios`, {
+    return apiFetch(`${API_URL}/testimonios`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
         body: JSON.stringify(data),
     });
-    return handleResponse(response);
 };
 
 // ============ ME ENCANTA (LIKES) ============
 
-/**
- * Dar o quitar "Me gusta"
- */
 export const toggleLike = async (data) => {
-    const response = await fetch(`${API_URL}/me-encanta/toggle`, {
+    return apiFetch(`${API_URL}/me-encanta/toggle`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
         body: JSON.stringify(data),
     });
-    return handleResponse(response);
 };
 
-/**
- * Obtener "Me gusta" de un usuario
- */
 export const getMyLikes = async (usuarioId) => {
-    const response = await fetch(`${API_URL}/me-encanta/usuario/${usuarioId}`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/me-encanta/usuario/${usuarioId}`);
 };
 
 // ============ CURSOS ============
 
-/**
- * Obtener todos los cursos
- */
 export const getCourses = async () => {
-    const response = await fetch(`${API_URL}/cursos`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/cursos`);
 };
 
-/**
- * Obtener un curso por ID
- */
 export const getCourseById = async (id) => {
-    const response = await fetch(`${API_URL}/cursos/${id}`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/cursos/${id}`);
 };
 
-/**
- * Inscribirse a un curso
- */
 export const enrollCourse = async (data) => {
-    const response = await fetch(`${API_URL}/cursos/inscribir`, {
+    return apiFetch(`${API_URL}/cursos/inscribir`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
         body: JSON.stringify(data),
     });
-    return handleResponse(response);
 };
 
-/**
- * Obtener cursos de un usuario
- */
 export const getMyCourses = async (usuarioId) => {
-    const response = await fetch(`${API_URL}/cursos/usuario/${usuarioId}`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/cursos/usuario/${usuarioId}`);
 };
 
 // ============ EVENTOS ============
 
-/**
- * Obtener todos los eventos
- */
 export const getEvents = async () => {
-    const response = await fetch(`${API_URL}/eventos`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/eventos`);
 };
 
-/**
- * Obtener un evento por ID
- */
 export const getEventById = async (id) => {
-    const response = await fetch(`${API_URL}/eventos/${id}`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/eventos/${id}`);
 };
 
-/**
- * Confirmar asistencia a un evento
- */
 export const confirmAttendance = async (data) => {
-    const response = await fetch(`${API_URL}/eventos/confirmar-asistencia`, {
+    return apiFetch(`${API_URL}/eventos/confirmar-asistencia`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
         body: JSON.stringify(data),
     });
-    return handleResponse(response);
 };
 
-/**
- * Obtener eventos de un usuario
- */
 export const getMyEvents = async (usuarioId) => {
-    const response = await fetch(`${API_URL}/eventos/usuario/${usuarioId}`);
-    return handleResponse(response);
+    return apiFetch(`${API_URL}/eventos/usuario/${usuarioId}`);
 };
-
 
 // ============ PERFIL DE USUARIO ============
 
-/**
- * Actualizar perfil de usuario (sin imagen)
- */
 export const updateProfile = async (userId, data) => {
     try {
-        const response = await fetch(`${API_URL}/perfil/${userId}`, {
+        return await apiFetch(`${API_URL}/perfil/${userId}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(data),
         });
-        return handleResponse(response);
     } catch (error) {
         console.error('❌ Error actualizando perfil:', error);
         throw error;
     }
 };
 
-/**
- * Actualizar perfil de usuario CON IMAGEN
- */
 export const updateProfileWithImage = async (userId, formData) => {
     try {
-        const response = await fetch(`${API_URL}/perfil/${userId}`, {
-            method: 'POST',  // ← POST para subir archivos
-            body: formData,  // ← FormData con la imagen
-            // NO incluir headers 'Content-Type' (lo maneja FormData)
+        return await apiFetch(`${API_URL}/perfil/${userId}`, {
+            method: 'POST',
+            body: formData,
         });
-        return handleResponse(response);
     } catch (error) {
         console.error('❌ Error actualizando perfil con imagen:', error);
         throw error;
     }
 };
 
-/**
- * Obtener perfil de usuario
- */
 export const getProfile = async (userId) => {
     try {
-        const response = await fetch(`${API_URL}/perfil/${userId}`);
-        return handleResponse(response);
+        return await apiFetch(`${API_URL}/perfil/${userId}`);
     } catch (error) {
         console.error('❌ Error obteniendo perfil:', error);
         throw error;
     }
 };
 
-
 // ============ CAMBIAR CONTRASEÑA ============
 
-/**
- * Cambiar contraseña de usuario
- */
 export const changePassword = async (userId, data) => {
     try {
-        const response = await fetch(`${API_URL}/cambiar-password/${userId}`, {
+        return await apiFetch(`${API_URL}/cambiar-password/${userId}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(data),
         });
-        return handleResponse(response);
     } catch (error) {
         console.error('❌ Error cambiando contraseña:', error);
+        throw error;
+    }
+};
+
+// ============ CARRITO ============
+
+export const getCart = async (usuarioId) => {
+    try {
+        return await apiFetch(`${API_URL}/carrito/${usuarioId}`);
+    } catch (error) {
+        console.error('Error obteniendo carrito:', error);
+        throw error;
+    }
+};
+
+export const addToCart = async (data) => {
+    try {
+        return await apiFetch(`${API_URL}/carrito/agregar`, {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    } catch (error) {
+        console.error('Error agregando al carrito:', error);
+        throw error;
+    }
+};
+
+export const updateCartItem = async (itemId, data) => {
+    try {
+        return await apiFetch(`${API_URL}/carrito/actualizar/${itemId}`, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+    } catch (error) {
+        console.error('Error actualizando item:', error);
+        throw error;
+    }
+};
+
+export const removeFromCart = async (itemId) => {
+    try {
+        return await apiFetch(`${API_URL}/carrito/eliminar/${itemId}`, {
+            method: 'DELETE',
+        });
+    } catch (error) {
+        console.error('Error eliminando del carrito:', error);
+        throw error;
+    }
+};
+
+export const clearCart = async (usuarioId) => {
+    try {
+        return await apiFetch(`${API_URL}/carrito/vaciar/${usuarioId}`, {
+            method: 'DELETE',
+        });
+    } catch (error) {
+        console.error('Error vaciando carrito:', error);
+        throw error;
+    }
+};
+
+// ============ ÓRDENES ============
+
+export const createOrder = async (data) => {
+    try {
+        return await apiFetch(`${API_URL}/ordenes`, {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    } catch (error) {
+        console.error('Error creando orden:', error);
+        throw error;
+    }
+};
+
+export const getMyOrders = async (usuarioId) => {
+    try {
+        return await apiFetch(`${API_URL}/ordenes/usuario/${usuarioId}`);
+    } catch (error) {
+        console.error('Error obteniendo órdenes:', error);
+        throw error;
+    }
+};
+
+export const getOrderById = async (orderId) => {
+    try {
+        return await apiFetch(`${API_URL}/ordenes/${orderId}`);
+    } catch (error) {
+        console.error('Error obteniendo orden:', error);
+        throw error;
+    }
+};
+
+export const cancelOrder = async (orderId) => {
+    try {
+        return await apiFetch(`${API_URL}/ordenes/${orderId}/cancelar`, {
+            method: 'PUT',
+        });
+    } catch (error) {
+        console.error('Error cancelando orden:', error);
+        throw error;
+    }
+};
+
+// ============ CHAT ============
+
+export const getConversations = async (usuarioId) => {
+    try {
+        return await apiFetch(`${API_URL}/conversaciones/${usuarioId}`);
+    } catch (error) {
+        console.error('Error obteniendo conversaciones:', error);
+        throw error;
+    }
+};
+
+export const getAvailableUsers = async (usuarioId) => {
+    try {
+        return await apiFetch(`${API_URL}/usuarios/disponibles/${usuarioId}`);
+    } catch (error) {
+        console.error('Error obteniendo usuarios disponibles:', error);
+        throw error;
+    }
+};
+
+export const getUserById = async (usuarioId) => {
+    try {
+        return await apiFetch(`${API_URL}/usuarios/${usuarioId}`);
+    } catch (error) {
+        console.error('Error obteniendo usuario:', error);
+        throw error;
+    }
+};
+
+export const getMessages = async (conversacionId) => {
+    try {
+        return await apiFetch(`${API_URL}/mensajes/${conversacionId}`);
+    } catch (error) {
+        console.error('Error obteniendo mensajes:', error);
+        throw error;
+    }
+};
+
+export const sendMessage = async (data) => {
+    try {
+        return await apiFetch(`${API_URL}/mensajes`, {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    } catch (error) {
+        console.error('Error enviando mensaje:', error);
+        throw error;
+    }
+};
+
+export const markMessagesAsRead = async (conversacionId, usuarioId) => {
+    try {
+        return await apiFetch(`${API_URL}/mensajes/leer/${conversacionId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ usuario_id: usuarioId }),
+        });
+    } catch (error) {
+        console.error('Error marcando mensajes como leídos:', error);
+        throw error;
+    }
+};
+
+export const deleteConversation = async (conversacionId) => {
+    try {
+        return await apiFetch(`${API_URL}/conversaciones/${conversacionId}`, {
+            method: 'DELETE',
+        });
+    } catch (error) {
+        console.error('Error eliminando conversación:', error);
         throw error;
     }
 };
