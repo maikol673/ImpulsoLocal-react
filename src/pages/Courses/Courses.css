@@ -1,6 +1,5 @@
 /**
  * Courses.css - Estilos para Formación de Cursos
- * VERSIÓN HOMOGÉNEA - Todos los botones en azul
  */
 
 .courses-page {
@@ -9,7 +8,7 @@
   padding: 30px 0;
 }
 
-.container {
+.courses-page .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
@@ -57,6 +56,22 @@
   margin: 0;
 }
 
+.btn-my-courses {
+  background: #2a5bdc;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-my-courses:hover {
+  background: #1e4ac4;
+  transform: translateY(-2px);
+  color: white;
+}
+
 .courses-subtitle {
   text-align: center;
   font-size: 1.15rem;
@@ -64,14 +79,14 @@
   margin-bottom: 35px;
 }
 
-/* ============ GRID DE CURSOS ============ */
+/* ============ GRID ============ */
 .courses-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 25px;
 }
 
-/* ============ TARJETA DE CURSO ============ */
+/* ============ TARJETA ============ */
 .course-card {
   background: white;
   border-radius: 12px;
@@ -85,7 +100,7 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
-/* ============ HEADER DEL CURSO - TODOS AZULES ============ */
+/* ============ HEADER ============ */
 .course-header-card {
   padding: 18px 20px;
   color: white;
@@ -94,7 +109,18 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-  background: linear-gradient(135deg, #2a5bdc, #1e4ac4);
+}
+
+.header-beginner {
+  background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.header-intermediate {
+  background: linear-gradient(135deg, #ffc107, #fd7e14);
+}
+
+.header-advanced {
+  background: linear-gradient(135deg, #dc3545, #e74a3b);
 }
 
 .course-card-name {
@@ -103,7 +129,6 @@
   font-weight: 600;
 }
 
-/* ============ BADGES DEL HEADER ============ */
 .course-card-badge {
   padding: 3px 14px;
   border-radius: 20px;
@@ -111,22 +136,22 @@
   font-weight: 600;
 }
 
-.badge-warning {
-  background: #ffc107;
-  color: #212529;
-}
-
-.badge-danger {
-  background: #dc3545;
+.nivel-beginner {
+  background: rgba(255, 255, 255, 0.25);
   color: white;
 }
 
-.badge-success {
-  background: #28a745;
+.nivel-intermediate {
+  background: rgba(255, 255, 255, 0.25);
   color: white;
 }
 
-/* ============ CUERPO DEL CURSO ============ */
+.nivel-advanced {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+/* ============ CUERPO ============ */
 .course-card-body {
   padding: 18px 20px;
 }
@@ -147,13 +172,13 @@
   font-weight: 500;
 }
 
-.badge-nivel {
+.badge-modalidad {
+  background: #17a2b8;
+  color: white;
   padding: 3px 12px;
   border-radius: 20px;
   font-size: 0.7rem;
   font-weight: 500;
-  color: white;
-  background: #2a5bdc;
 }
 
 .course-card-description {
@@ -182,7 +207,7 @@
   padding: 2px 0;
 }
 
-/* ============ FOOTER DEL CURSO ============ */
+/* ============ FOOTER ============ */
 .course-card-footer {
   padding: 15px 20px;
   border-top: 1px solid #e9ecef;
@@ -195,9 +220,7 @@
   margin-bottom: 12px;
 }
 
-/* ============ BOTONES - TODOS AZULES ============ */
-
-/* Botón Inscribirse - AZUL */
+/* ============ BOTONES ============ */
 .btn-enroll-course {
   display: inline-block;
   padding: 10px 20px;
@@ -211,45 +234,42 @@
   width: 100%;
   text-align: center;
   margin-bottom: 8px;
-  background: #2a5bdc; /* ← AZUL */
+  background: #28a745;
 }
 
-.btn-enroll-course:hover {
-  background: #1e4ac4; /* ← AZUL OSCURO */
+.btn-enroll-course:hover:not(:disabled) {
+  background: #218838;
   transform: translateY(-2px);
 }
 
-/* Botón Login para inscribirse - AZUL */
-.btn-enroll-login-course {
+.btn-enroll-course:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-enrolled {
   display: inline-block;
   padding: 10px 20px;
-  border: 2px solid #2a5bdc;
+  border: none;
   border-radius: 6px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #2a5bdc;
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.3s;
+  color: white;
   width: 100%;
   text-align: center;
   margin-bottom: 8px;
+  background: #6c757d;
+  cursor: default;
 }
 
-.btn-enroll-login-course:hover {
-  background: #2a5bdc;
-  color: white;
-}
-
-/* Botón Ver Detalles - AZUL */
 .btn-details-course {
   display: inline-block;
   padding: 10px 20px;
-  border: 1px solid #2a5bdc; /* ← AZUL */
+  border: 1px solid #ced4da;
   border-radius: 6px;
   font-size: 0.9rem;
   font-weight: 500;
-  color: #2a5bdc; /* ← AZUL */
+  color: #6c757d;
   background: transparent;
   cursor: pointer;
   transition: all 0.3s;
@@ -259,8 +279,9 @@
 }
 
 .btn-details-course:hover {
-  background: #2a5bdc;
-  color: white;
+  background: #f8f9fa;
+  border-color: #2a5bdc;
+  color: #2a5bdc;
 }
 
 /* ============ SECCIÓN DE INFORMACIÓN ============ */
@@ -318,15 +339,16 @@
     font-size: 1.4rem;
   }
   
+  .btn-my-courses {
+    width: 100%;
+    text-align: center;
+  }
+  
   .courses-grid {
     grid-template-columns: 1fr;
   }
   
   .info-grid {
     grid-template-columns: 1fr;
-  }
-  
-  .course-card:hover {
-    transform: translateY(-4px);
   }
 }

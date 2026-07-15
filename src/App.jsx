@@ -40,6 +40,7 @@ import CourseDetail from './pages/CourseDetail/CourseDetail';
 import Courses from './pages/Courses/Courses';
 import Networking from './pages/Networking/Networking';
 import EditProduct from './pages/EditProduct/EditProduct';
+import Dashboard from './pages/Dashboard/Dashboard';
 
 
 
@@ -82,6 +83,7 @@ function App() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/networking" element={<Networking />} />
         <Route path="/edit-product/:id" element={<EditProduct />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
       
       {/* Footer - Pie de página */}

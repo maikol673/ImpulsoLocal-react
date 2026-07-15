@@ -1,249 +1,291 @@
 /**
  * Networking.jsx - Networking para Emprendedores
- * Muestra eventos de networking y comunidad
- * SIN API - SIN useEffect - Datos directos
+ * CON API REAL - CONFIRMAR ASISTENCIA
  */
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { getEvents, confirmAttendance } from '../../services/api';
 import './Networking.css';
 
 const Networking = () => {
-  const navigate = useNavigate();
-  
-  // ✅ Verificar login
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  // const userData = JSON.parse(localStorage.getItem('user') || '{}');  // ← ELIMINADO - no se usa
+    const navigate = useNavigate();
 
-  // ✅ Datos FIJOS - Eventos
-  const events = [
-    {
-      id: 1,
-      nombre: 'Networking Emprendedores Bogotá',
-      fecha: '2024-02-15T18:00:00',
-      hora: '18:00',
-      tipo: 'presencial',
-      ubicacion: 'Centro de Convenciones, Bogotá',
-      descripcion: 'Únete al evento de networking más grande de Bogotá. Conecta con otros emprendedores, inversores y mentores.',
-      asistentes: 150,
-      badge: '150+ Asistentes!',
-      color: 'primary'
-    },
-    {
-      id: 2,
-      nombre: 'Feria de Emprendimiento Medellín',
-      fecha: '2024-03-01T09:00:00',
-      hora: '09:00',
-      tipo: 'presencial',
-      ubicacion: 'Plaza Mayor, Medellín',
-      descripcion: 'Exposición de emprendimientos locales. Oportunidad para mostrar tus productos y hacer contactos comerciales.',
-      asistentes: 80,
-      badge: null,
-      color: 'success'
-    },
-    {
-      id: 3,
-      nombre: 'Webinar: Finanzas para Emprendedores',
-      fecha: '2024-02-20T10:00:00',
-      hora: '10:00',
-      tipo: 'online',
-      ubicacion: 'Plataforma Zoom',
-      descripcion: 'Aprende a manejar las finanzas de tu emprendimiento con expertos en el tema.',
-      asistentes: 200,
-      badge: '¡Online!',
-      color: 'info'
+    // ============================================================
+    // ✅ TODOS LOS HOOKS PRIMERO (sin returns antes de declararlos)
+    // ============================================================
+    const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [processing, setProcessing] = useState({});
+
+    // Usuario logueado (se lee una sola vez)
+    const [user] = useState(() => JSON.parse(localStorage.getItem('user') || '{}'));
+
+    // ✅ Redirigir a /login como efecto, no como return anticipado
+    // (un return antes de declarar los demás hooks rompe las reglas de hooks
+    // de React: en el siguiente render el useEffect de abajo dejaría de
+    // ejecutarse y events/loading/error/processing cambiarían de orden)
+    useEffect(() => {
+        if (!user.id) {
+            navigate('/login');
+        }
+    }, [user.id, navigate]);
+
+    // Cargar eventos
+    useEffect(() => {
+        const loadEvents = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const data = await getEvents();
+                setEvents(data);
+                console.log('📅 Eventos cargados:', data);
+            } catch (err) {
+                console.error('❌ Error cargando eventos:', err);
+                setError(err.message || 'No se pudieron cargar los eventos');
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadEvents();
+    }, []);
+
+    // ✅ CONFIRMAR ASISTENCIA
+    const handleConfirmAttendance = useCallback(async (eventoId, modalidad, nombre) => {
+        if (!user.id) {
+            alert('Debes iniciar sesión para confirmar asistencia');
+            navigate('/login');
+            return;
+        }
+
+        // Marcar como procesando
+        setProcessing(prev => ({ ...prev, [eventoId]: true }));
+
+        try {
+            const data = {
+                usuario_id: user.id,
+                evento_id: eventoId
+            };
+
+            console.log(`📡 Confirmando asistencia a: ${nombre}`);
+            const response = await confirmAttendance(data);
+
+            if (response) {
+                alert(`✅ Asistencia confirmada para "${nombre}"`);
+
+                // Actualizar estado local (marcar como asistido)
+                setEvents(prev => prev.map(event =>
+                    event.id === eventoId
+                        ? { ...event, ya_asistio: true }
+                        : event
+                ));
+            }
+        } catch (err) {
+            console.error('❌ Error:', err);
+            if (err.message === 'Ya estás registrado en este evento') {
+                alert('⚠️ Ya estás registrado en este evento');
+                // Reflejar el estado real aunque la llamada haya fallado por duplicado
+                setEvents(prev => prev.map(event =>
+                    event.id === eventoId
+                        ? { ...event, ya_asistio: true }
+                        : event
+                ));
+            } else {
+                alert('❌ Error al confirmar asistencia. Intenta nuevamente.');
+            }
+        } finally {
+            setProcessing(prev => ({ ...prev, [eventoId]: false }));
+        }
+    }, [user.id, navigate]);
+
+    // Formatear fecha
+    const formatDate = (fecha) => {
+        if (!fecha) return 'N/A';
+        const date = new Date(fecha);
+        return date.toLocaleDateString('es-CO', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
+    };
+
+    const formatTime = (fecha) => {
+        if (!fecha) return 'N/A';
+        const date = new Date(fecha);
+        return date.toLocaleTimeString('es-CO', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
+    // Obtener clase de color para el header
+    const getHeaderClass = (color) => {
+        const classes = {
+            'primary': 'header-primary',
+            'success': 'header-success',
+            'info': 'header-info'
+        };
+        return classes[color] || 'header-primary';
+    };
+
+    // Obtener estilo de botón según modalidad del evento
+    const getButtonClass = (modalidad) => {
+        return modalidad === 'online' ? 'btn-online' : 'btn-presencial';
+    };
+
+    const getButtonText = (modalidad) => {
+        return modalidad === 'online' ? '🎯 Unirse Online' : '✅ Confirmar Asistencia';
+    };
+
+    // ============================================================
+    // ✅ RENDER CONDICIONAL (después de declarar todos los hooks)
+    // ============================================================
+    if (!user.id) {
+        // Se está redirigiendo en el useEffect de arriba
+        return null;
     }
-  ];
 
-  // ✅ Datos FIJOS - Usuarios para conectar
-  const users = [
-    { id: 2, username: 'maria_perez', full_name: 'María Pérez' },
-    { id: 3, username: 'carlos_lopez', full_name: 'Carlos López' },
-    { id: 4, username: 'ana_garcia', full_name: 'Ana García' },
-    { id: 5, username: 'juan_rodriguez', full_name: 'Juan Rodríguez' }
-  ];
-
-  // Formatear fecha
-  const formatDate = (fecha) => {
-    const date = new Date(fecha);
-    return date.toLocaleDateString('es-CO', { 
-      day: '2-digit', 
-      month: 'long', 
-      year: 'numeric' 
-    });
-  };
-
-  const formatTime = (fecha) => {
-    const date = new Date(fecha);
-    return date.toLocaleTimeString('es-CO', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-  };
-
-  // Obtener clase de color para el header
-  const getHeaderClass = (color) => {
-    const classes = {
-      'primary': 'header-primary',
-      'success': 'header-success',
-      'info': 'header-info'
-    };
-    return classes[color] || 'header-primary';
-  };
-
-  // Obtener clase de badge
-  const getBadgeClass = (color) => {
-    const classes = {
-      'primary': 'badge-warning',
-      'success': 'badge-warning',
-      'info': 'badge-warning'
-    };
-    return classes[color] || 'badge-warning';
-  };
-
-  // Obtener estilo de botón según tipo de evento
-  const getButtonClass = (tipo) => {
-    return tipo === 'online' ? 'btn-online' : 'btn-presencial';
-  };
-
-  const getButtonText = (tipo) => {
-    return tipo === 'online' ? '🎯 Unirse Online' : '✅ Confirmar Asistencia';
-  };
-
-  return (
-    <div className="networking-page">
-      <div className="container">
-        
-        {/* ============ HEADER CON BOTÓN VOLVER ============ */}
-        <div className="networking-header">
-          <div className="networking-header-left">
-            <Link to="/" className="btn-back-home-networking">
-              <i className="fas fa-arrow-left"></i> Volver al inicio
-            </Link>
-            <h1 className="networking-title">Networking</h1>
-          </div>
-        </div>
-
-        {/* ============ SECCIÓN COMUNIDAD ============ */}
-        <div className="community-section">
-          <div className="community-content">
-            <h2 className="community-title">Únete a Nuestra Comunidad</h2>
-            <p className="community-text">
-              Más de <strong>2,000 emprendedores</strong> conectados
-            </p>
-            
-            <div className="community-buttons">
-              <a 
-                href="https://facebook.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="btn-social btn-facebook"
-              >
-                <i className="fab fa-facebook-f me-2"></i>
-                Facebook
-              </a>
-              <a 
-                href="https://instagram.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="btn-social btn-instagram"
-              >
-                <i className="fab fa-instagram me-2"></i>
-                Instagram
-              </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="btn-social btn-twitter"
-              >
-                <i className="fab fa-twitter me-2"></i>
-                Twitter
-              </a>
+    if (loading) {
+        return (
+            <div className="networking-page">
+                <div className="container text-center py-5">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Cargando...</span>
+                    </div>
+                    <p className="mt-2">Cargando eventos...</p>
+                </div>
             </div>
-          </div>
-        </div>
+        );
+    }
 
-        {/* ============ EVENTOS ============ */}
-        <div className="events-grid">
-          {events.map((event) => (
-            <div key={event.id} className="event-card">
-              
-              {/* Header del evento */}
-              <div className={`event-header ${getHeaderClass(event.color)}`}>
-                <h4 className="event-name">{event.nombre}</h4>
-                {event.badge && (
-                  <span className={`event-badge ${getBadgeClass(event.color)}`}>
-                    {event.badge}
-                  </span>
-                )}
-              </div>
-              
-              <div className="event-body">
-                <div className="event-date">
-                  <strong>Fecha:</strong> {formatDate(event.fecha)}
+    if (error) {
+        return (
+            <div className="networking-page">
+                <div className="container text-center py-5">
+                    <div className="alert alert-danger">Error: {error}</div>
+                    <Link to="/" className="btn btn-secondary">← Volver al inicio</Link>
                 </div>
-                <div className="event-time">
-                  <strong>Hora:</strong> {formatTime(event.fecha)}
+            </div>
+        );
+    }
+
+    return (
+        <div className="networking-page">
+            <div className="container">
+
+                {/* Header */}
+                <div className="networking-header">
+                    <div className="networking-header-left">
+                        <Link to="/" className="btn-back-home-networking">
+                            <i className="fas fa-arrow-left"></i> Volver al inicio
+                        </Link>
+                        <h1 className="networking-title">🌐 Networking</h1>
+                    </div>
                 </div>
-                <div className="event-location">
-                  <strong>Lugar:</strong>{' '}
-                  {event.tipo === 'online' 
-                    ? `Virtual (${event.ubicacion})` 
-                    : event.ubicacion}
+
+                {/* Sección Comunidad */}
+                <div className="community-section">
+                    <div className="community-content">
+                        <h2 className="community-title">Únete a Nuestra Comunidad</h2>
+                        <p className="community-text">
+                            Más de <strong>2,000 emprendedores</strong> conectados
+                        </p>
+                        <div className="community-buttons">
+                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="btn-social btn-facebook">
+                                <i className="fab fa-facebook-f me-2"></i> Facebook
+                            </a>
+                            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="btn-social btn-instagram">
+                                <i className="fab fa-instagram me-2"></i> Instagram
+                            </a>
+                            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="btn-social btn-twitter">
+                                <i className="fab fa-twitter me-2"></i> Twitter
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <p className="event-description">{event.descripcion}</p>
-              </div>
-              
-              <div className="event-footer">
-                {isLoggedIn ? (
-                  <button className={`btn-event ${getButtonClass(event.tipo)}`}>
-                    {getButtonText(event.tipo)}
-                  </button>
+
+                {/* Eventos */}
+                {events.length === 0 ? (
+                    <p className="networking-status">No hay eventos disponibles por el momento.</p>
                 ) : (
-                  <button 
-                    className="btn-event-login"
-                    onClick={() => navigate('/login')}
-                  >
-                    Iniciar sesión para participar
-                  </button>
+                    <div className="events-grid">
+                        {events.map(event => (
+                            <div key={event.id} className="event-card">
+                                <div className={`event-header ${getHeaderClass(event.color || 'primary')}`}>
+                                    <h4 className="event-name">{event.nombre}</h4>
+                                    {event.badge && (
+                                        <span className="event-badge">{event.badge}</span>
+                                    )}
+                                </div>
+                                <div className="event-body">
+                                    <div className="event-date">
+                                        <strong>📅 Fecha:</strong> {formatDate(event.fecha)}
+                                    </div>
+                                    <div className="event-time">
+                                        <strong>⏰ Hora:</strong> {formatTime(event.fecha)}
+                                    </div>
+                                    <div className="event-location">
+                                        <strong>📍 Lugar:</strong>{' '}
+                                        {event.modalidad === 'online'
+                                            ? `Virtual (${event.enlace_online || 'Plataforma Zoom'})`
+                                            : event.ubicacion}
+                                    </div>
+                                    {event.descripcion && (
+                                        <p className="event-description">{event.descripcion}</p>
+                                    )}
+                                </div>
+                                <div className="event-footer">
+                                    <button
+                                        className={`btn-event ${getButtonClass(event.modalidad)}`}
+                                        onClick={() => handleConfirmAttendance(event.id, event.modalidad, event.nombre)}
+                                        disabled={processing[event.id] || event.ya_asistio}
+                                    >
+                                        {processing[event.id] ? (
+                                            <>
+                                                <i className="fas fa-spinner fa-spin"></i> Procesando...
+                                            </>
+                                        ) : event.ya_asistio ? (
+                                            '✅ Ya confirmado'
+                                        ) : (
+                                            getButtonText(event.modalidad)
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 )}
-              </div>
-            </div>
-          ))}
-        </div>
 
-        {/* ============ RED DE CONTACTOS ============ */}
-        {isLoggedIn && (
-          <div className="contacts-section">
-            <div className="contacts-card">
-              <div className="contacts-header">
-                <h4 className="contacts-title">Red de Contactos</h4>
-              </div>
-              <div className="contacts-body">
-                <h5 className="contacts-subtitle">Conecta con otros Emprendedores</h5>
-                <p className="contacts-text">
-                  Expande tu red profesional y encuentra colaboradores.
-                </p>
-                <div className="contacts-grid">
-                  {users.slice(0, 3).map((user, index) => (
-                    <button 
-                      key={user.id}
-                      className={`btn-contact ${index === 0 ? 'btn-contact-primary' : index === 1 ? 'btn-contact-success' : 'btn-contact-info'}`}
-                      onClick={() => alert(`💬 Conectando con ${user.full_name || user.username}`)}
-                    >
-                      👤 Conectar con {user.full_name || user.username}
-                    </button>
-                  ))}
+                {/* Red de Contactos */}
+                <div className="contacts-section">
+                    <div className="contacts-card">
+                        <div className="contacts-header">
+                            <h4 className="contacts-title">🤝 Red de Contactos</h4>
+                        </div>
+                        <div className="contacts-body">
+                            <h5 className="contacts-subtitle">Conecta con otros Emprendedores</h5>
+                            <p className="contacts-text">
+                                Expande tu red profesional y encuentra colaboradores.
+                            </p>
+                            <div className="contacts-grid">
+                                <button className="btn-contact btn-contact-primary" onClick={() => alert('💬 Función de conexión próximamente')}>
+                                    👤 Conectar con María Pérez
+                                </button>
+                                <button className="btn-contact btn-contact-success" onClick={() => alert('💬 Función de conexión próximamente')}>
+                                    👤 Conectar con Carlos López
+                                </button>
+                                <button className="btn-contact btn-contact-info" onClick={() => alert('💬 Función de conexión próximamente')}>
+                                    👤 Conectar con Ana García
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
+
             </div>
-          </div>
-        )}
-        
-      </div>
-    </div>
-  );
+        </div>
+    );
 };
 
 export default Networking;

@@ -1,6 +1,6 @@
 /**
  * Header.jsx - Barra de navegación superior
- * CON CONTADOR DE CARRITO
+ * CON CONTADOR DE CARRITO - CON ADMIN
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -16,29 +16,43 @@ const Header = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [cartCount, setCartCount] = useState(0);
 
-    // Cargar carrito (declarada con useCallback, antes de usarse en el efecto)
+    // Cargar carrito
     const cargarCarrito = useCallback(async (usuarioId) => {
         try {
+            console.log('📡 Cargando carrito para usuario:', usuarioId);
             const data = await getCart(usuarioId);
             if (data && data.items) {
                 const totalItems = data.items.reduce((sum, item) => sum + item.cantidad, 0);
                 setCartCount(totalItems);
+                console.log('🛒 Carrito cargado:', totalItems, 'items');
+            } else {
+                setCartCount(0);
             }
         } catch (error) {
-            console.error('Error cargando carrito:', error);
+            console.error('❌ Error cargando carrito:', error);
+            setCartCount(0);
         }
     }, []);
 
-    // Verificar login al cargar y cuando cambie localStorage
+    // Verificar login al cargar
     useEffect(() => {
         const checkAuth = () => {
             const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
             setIsLoggedIn(loggedIn);
             
             if (loggedIn) {
-                const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-                setUser(storedUser);
-                cargarCarrito(storedUser.id);
+                try {
+                    const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+                    console.log('👤 Usuario logueado:', storedUser);
+                    setUser(storedUser);
+                    if (storedUser.id) {
+                        cargarCarrito(storedUser.id);
+                    }
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    setUser(null);
+                    setCartCount(0);
+                }
             } else {
                 setUser(null);
                 setCartCount(0);
@@ -47,7 +61,6 @@ const Header = () => {
 
         checkAuth();
         
-        // Escuchar cambios en localStorage
         window.addEventListener('storage', checkAuth);
         
         return () => {
@@ -153,6 +166,14 @@ const Header = () => {
                                     </Link>
                                 </li>
                                 <li><hr className="dropdown-divider" /></li>
+                                {/* ✅ BOTÓN ADMIN - SIEMPRE VISIBLE PARA ADMINISTRADORES */}
+                                {user?.is_staff === true && (
+                                    <li>
+                                        <Link to="/admin" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                                            👑 Admin
+                                        </Link>
+                                    </li>
+                                )}
                                 <li>
                                     <button className="dropdown-item text-danger" onClick={handleLogout}>
                                         🚪 Cerrar Sesión
@@ -169,8 +190,8 @@ const Header = () => {
                     </>
                 )}
                 
-                {/* Botón Admin (solo para admins - simulado) */}
-                {isLoggedIn && user?.isAdmin && (
+                {/* Botón Admin (fuera del dropdown) - solo para admins */}
+                {isLoggedIn && user?.is_staff === true && (
                     <Link to="/admin" className="admin-desktop-btn">
                         <i className="fas fa-cog"></i> Admin
                     </Link>

@@ -1,6 +1,6 @@
 /**
  * Home.jsx - Página principal
- * EXACTAMENTE como el home.html de Django
+ * SIN CRECIMIENTO - SOLO NETWORKING Y FORMACIÓN
  */
 
 import React from 'react';
@@ -36,21 +36,12 @@ const Home = () => {
         </div>
       </section>
 
-      {/* BENEFICIOS - CON ENLACES CORRECTOS */}
+      {/* BENEFICIOS - SOLO NETWORKING Y FORMACIÓN */}
       <section className="features">
         <h2 className="section-title">Nuestros Beneficios</h2>
         <div className="features-grid">
           
-          {/* Beneficio 1: Crecimiento - VA A VENTURES */}
-          <Link to="/ventures" className="feature-link" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className="feature-card">
-              <div className="feature-icon">📈</div>
-              <h3>Crecimiento</h3>
-              <p>Herramientas para escalar tu negocio de manera sostenible</p>
-            </div>
-          </Link>
-          
-          {/* Beneficio 2: Networking - VA A NETWORKING */}
+          {/* ✅ Networking */}
           <Link to="/networking" className="feature-link" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="feature-card">
               <div className="feature-icon">🤝</div>
@@ -59,7 +50,7 @@ const Home = () => {
             </div>
           </Link>
           
-          {/* Beneficio 3: Formación - VA A COURSES */}
+          {/* ✅ Formación */}
           <Link to="/courses" className="feature-link" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="feature-card">
               <div className="feature-icon">🎓</div>
@@ -67,6 +58,7 @@ const Home = () => {
               <p>Cursos especializados para cada etapa de tu negocio</p>
             </div>
           </Link>
+          
         </div>
       </section>
 
@@ -108,25 +100,6 @@ const Home = () => {
               📝 Inicia sesión para compartir tu experiencia
             </button>
           )}
-        </div>
-      </section>
-
-      {/* EMPRENDIMIENTOS DESTACADOS */}
-      <section className="ventures">
-        <h2 className="section-title">Emprendimientos Destacados</h2>
-        <div className="ventures-grid">
-          <div className="venture-card">
-            <h3>GreenTech</h3>
-            <p>Soluciones sostenibles para la agricultura urbana.</p>
-          </div>
-          <div className="venture-card">
-            <h3>EduSmart</h3>
-            <p>Plataforma de formación para jóvenes emprendedores.</p>
-          </div>
-          <div className="venture-card">
-            <h3>ArtesanaCo</h3>
-            <p>Comercio digital para artesanos locales.</p>
-          </div>
         </div>
       </section>
       

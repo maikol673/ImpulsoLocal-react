@@ -1,8 +1,6 @@
 /**
  * api.js - Servicio para conectar con Laravel API
- * VERSIÓN CORREGIDA: siempre envía Accept: application/json
- * y detecta cuando el servidor responde HTML en vez de JSON
- * (evita el error "Unexpected token '<'... is not valid JSON")
+ * VERSIÓN COMPLETA - CON TODAS LAS FUNCIONES
  */
 
 // URL base del servidor Laravel (sin /api) - para imágenes y archivos
@@ -11,6 +9,9 @@ export const BASE_URL = 'http://127.0.0.1:8000';
 // URL de la API de Laravel
 const API_URL = `${BASE_URL}/api`;
 
+// ============================================================
+// MANEJO DE RESPUESTAS
+// ============================================================
 
 const handleResponse = async (response) => {
     const contentType = response.headers.get('content-type') || '';
@@ -22,7 +23,7 @@ const handleResponse = async (response) => {
             text.slice(0, 800)
         );
         throw new Error(
-            `Error del servidor (${response.status}). Revisa la consola para ver el detalle (probablemente un error 500 de Laravel).`
+            `Error del servidor (${response.status}). Revisa la consola para ver el detalle.`
         );
     }
 
@@ -37,11 +38,9 @@ const handleResponse = async (response) => {
 
 /**
  * Wrapper central de fetch.
- * - Agrega automáticamente 'Accept: application/json' (clave para que Laravel
- *   devuelva JSON en los errores en vez de la página HTML de "Whoops").
- * - Si el body NO es FormData, agrega 'Content-Type: application/json'.
- * - Si el body ES FormData (subida de imágenes), deja que el navegador
- *   ponga el Content-Type con el boundary correcto.
+ * - Agrega automáticamente 'Accept: application/json'
+ * - Si el body NO es FormData, agrega 'Content-Type: application/json'
+ * - Si el body ES FormData, deja que el navegador ponga el Content-Type
  */
 const apiFetch = async (url, options = {}) => {
     const isFormData = options.body instanceof FormData;
@@ -62,7 +61,6 @@ const apiFetch = async (url, options = {}) => {
         const response = await fetch(url, { ...options, headers });
         return await handleResponse(response);
     } catch (error) {
-        // Errores de red (servidor caído, CORS, sin conexión, etc.)
         if (error instanceof TypeError) {
             console.error('❌ Error de red o CORS:', error.message);
             throw new Error('No se pudo conectar con el servidor. Verifica que el backend esté corriendo.');
@@ -71,7 +69,9 @@ const apiFetch = async (url, options = {}) => {
     }
 };
 
-// ============ AUTENTICACIÓN ============
+// ============================================================
+// AUTENTICACIÓN
+// ============================================================
 
 export const login = async (email, password) => {
     return apiFetch(`${API_URL}/login`, {
@@ -87,7 +87,30 @@ export const register = async (userData) => {
     });
 };
 
-// ============ EMPRENDIMIENTOS ============
+export const logout = async () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        await apiFetch(`${API_URL}/logout`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+        });
+    }
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('isLoggedIn');
+};
+
+// ============================================================
+// USUARIOS (Admin)
+// ============================================================
+
+export const getUsers = async () => {
+    return apiFetch(`${API_URL}/usuarios`);
+};
+
+// ============================================================
+// EMPRENDIMIENTOS
+// ============================================================
 
 export const getVentures = async () => {
     return apiFetch(`${API_URL}/emprendimientos`);
@@ -135,13 +158,17 @@ export const getMyVentures = async (usuarioId) => {
     return apiFetch(`${API_URL}/emprendimientos/usuario/${usuarioId}`);
 };
 
-// ============ CATEGORÍAS ============
+// ============================================================
+// CATEGORÍAS
+// ============================================================
 
 export const getCategories = async () => {
     return apiFetch(`${API_URL}/categorias`);
 };
 
-// ============ PRODUCTOS ============
+// ============================================================
+// PRODUCTOS
+// ============================================================
 
 export const getProductsByVenture = async (emprendimientoId) => {
     return apiFetch(`${API_URL}/productos/emprendimiento/${emprendimientoId}`);
@@ -180,8 +207,20 @@ export const updateProductWithImage = async (id, formData) => {
     }
 };
 
-// ============ RESEÑAS ============
+export const deleteProduct = async (id) => {
+    return apiFetch(`${API_URL}/productos/${id}`, {
+        method: 'DELETE',
+    });
+};
 
+// ============================================================
+// RESEÑAS
+// ============================================================
+
+/**
+ * Reseñas de UN emprendimiento específico.
+ * Requiere emprendimientoId (ej: para la página de detalle de un emprendimiento).
+ */
 export const getReviews = async (emprendimientoId) => {
     return apiFetch(`${API_URL}/resenas/emprendimiento/${emprendimientoId}`);
 };
@@ -211,7 +250,9 @@ export const deleteReview = async (reviewId) => {
     });
 };
 
-// ============ TESTIMONIOS ============
+// ============================================================
+// TESTIMONIOS
+// ============================================================
 
 export const getTestimonials = async () => {
     return apiFetch(`${API_URL}/testimonios`);
@@ -224,7 +265,9 @@ export const createTestimonial = async (data) => {
     });
 };
 
-// ============ ME ENCANTA (LIKES) ============
+// ============================================================
+// ME ENCANTA (LIKES)
+// ============================================================
 
 export const toggleLike = async (data) => {
     return apiFetch(`${API_URL}/me-encanta/toggle`, {
@@ -237,7 +280,9 @@ export const getMyLikes = async (usuarioId) => {
     return apiFetch(`${API_URL}/me-encanta/usuario/${usuarioId}`);
 };
 
-// ============ CURSOS ============
+// ============================================================
+// CURSOS
+// ============================================================
 
 export const getCourses = async () => {
     return apiFetch(`${API_URL}/cursos`);
@@ -258,7 +303,9 @@ export const getMyCourses = async (usuarioId) => {
     return apiFetch(`${API_URL}/cursos/usuario/${usuarioId}`);
 };
 
-// ============ EVENTOS ============
+// ============================================================
+// EVENTOS
+// ============================================================
 
 export const getEvents = async () => {
     return apiFetch(`${API_URL}/eventos`);
@@ -279,7 +326,9 @@ export const getMyEvents = async (usuarioId) => {
     return apiFetch(`${API_URL}/eventos/usuario/${usuarioId}`);
 };
 
-// ============ PERFIL DE USUARIO ============
+// ============================================================
+// PERFIL DE USUARIO
+// ============================================================
 
 export const updateProfile = async (userId, data) => {
     try {
@@ -314,7 +363,9 @@ export const getProfile = async (userId) => {
     }
 };
 
-// ============ CAMBIAR CONTRASEÑA ============
+// ============================================================
+// CAMBIAR CONTRASEÑA
+// ============================================================
 
 export const changePassword = async (userId, data) => {
     try {
@@ -328,7 +379,9 @@ export const changePassword = async (userId, data) => {
     }
 };
 
-// ============ CARRITO ============
+// ============================================================
+// CARRITO
+// ============================================================
 
 export const getCart = async (usuarioId) => {
     try {
@@ -385,7 +438,9 @@ export const clearCart = async (usuarioId) => {
     }
 };
 
-// ============ ÓRDENES ============
+// ============================================================
+// ÓRDENES
+// ============================================================
 
 export const createOrder = async (data) => {
     try {
@@ -428,7 +483,9 @@ export const cancelOrder = async (orderId) => {
     }
 };
 
-// ============ CHAT ============
+// ============================================================
+// CHAT
+// ============================================================
 
 export const getConversations = async (usuarioId) => {
     try {
@@ -497,6 +554,61 @@ export const deleteConversation = async (conversacionId) => {
         });
     } catch (error) {
         console.error('Error eliminando conversación:', error);
+        throw error;
+    }
+};
+
+// ============================================================
+// ADMIN - ESTADÍSTICAS AGREGADAS
+// ============================================================
+
+
+/**
+ * Todas las reseñas de todos los emprendimientos (para Admin).
+
+ */
+export const getAllReviews = async () => {
+    try {
+        const ventures = await getVentures();
+        let allReviews = [];
+
+        for (const venture of ventures) {
+            try {
+                const reviews = await getReviews(venture.id);
+                allReviews = [...allReviews, ...reviews];
+            } catch {
+                // Si un emprendimiento no tiene reseñas, continuar
+            }
+        }
+
+        return allReviews;
+    } catch (error) {
+        console.error('Error obteniendo todas las reseñas:', error);
+        throw error;
+    }
+};
+
+/**
+ * Todas las órdenes de todos los usuarios (para Admin).
+ * de la plataforma y no solo las órdenes del usuario logueado.
+ */
+export const getAllOrders = async () => {
+    try {
+        const users = await getUsers();
+        let allOrders = [];
+
+        for (const user of users) {
+            try {
+                const orders = await getMyOrders(user.id);
+                allOrders = [...allOrders, ...orders];
+            } catch {
+                // Si un usuario no tiene órdenes, continuar
+            }
+        }
+
+        return allOrders;
+    } catch (error) {
+        console.error('Error obteniendo todas las órdenes:', error);
         throw error;
     }
 };
